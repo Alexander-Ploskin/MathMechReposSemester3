@@ -1,13 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Text;
 using System.Threading;
 
 namespace ConcurrentMatrixMultiplication
 {
+    /// <summary>
+    /// Incapsulated methods of concurrent matrix multiplication
+    /// </summary>
     class ConcurrentMatrixMultiplier
     {
+        /// <summary>
+        /// Multiplies 2 matrices concurrently
+        /// </summary>
+        /// <param name="firstMatrix">first matrix</param>
+        /// <param name="secondMatrix">second matrix</param>
+        /// <returns>New matrix</returns>
         public static List<List<int>> Multiply(List<List<int>> firstMatrix, List<List<int>> secondMatrix)
         {
             var amountOfRowsInFirstMatrix = firstMatrix.Count;
@@ -24,9 +31,10 @@ namespace ConcurrentMatrixMultiplication
             }
 
             const int baseAmountOfThreads = 8;
-            int amountOfThreads = Math.Min(baseAmountOfThreads, amountOfRowsInFirstMatrix);
-            var threads = new Thread[amountOfThreads];
-            var chunkSize = amountOfRowsInFirstMatrix / amountOfThreads + 1;
+            int amountOfThreads = Math.Min(baseAmountOfThreads, amountOfRowsInFirstMatrix);   //Calculating of amount of threads and chunk size
+            var threads = new Thread[amountOfThreads];                                  //For little matrices amount of threads is amount of rows
+            var chunkSize = amountOfRowsInFirstMatrix / amountOfThreads + 1;              //Bigger matrices can contain mor rows in one thread
+                                                                                          //8 was setted as optimal after a lot of attempts with different matrices
             var results = new List<List<int>>[amountOfThreads];
             for (int i = 0; i < amountOfThreads; ++i)
             {
@@ -63,6 +71,7 @@ namespace ConcurrentMatrixMultiplication
                 }
             }
 
+            //Linking of results from threads
             var result = new List<List<int>>();
             foreach (var item in results)
             {
@@ -75,23 +84,22 @@ namespace ConcurrentMatrixMultiplication
             return result;
         }
 
+        /// <summary>
+        /// Calculates chank of matrix
+        /// </summary>
+        /// <param name="firstMatrix">first matrix</param>
+        /// <param name="secondMatrix">first matrix</param>
+        /// <param name="firstRow">low limit of calculation</param>
+        /// <param name="lastRow">high limit of calculation</param>
+        /// <param name="buffer">buffer for calculated rows</param>
         private static void MultiplyChank(List<List<int>> firstMatrix, List<List<int>> secondMatrix, int firstRow, int lastRow, List<List<int>> buffer)
         {
             var amountOfRowsInFirstMatrix = firstMatrix.Count;
-            var amountOfRowsInSecondMatrix = secondMatrix.Count;
-            if (amountOfRowsInFirstMatrix == 0 && amountOfRowsInSecondMatrix == 0)
-            {
-                return;
-            }
             var amountOfColumnsInFirstMatrix = firstMatrix[0].Count;
             var amountOfColumnsInSecondMatrix = secondMatrix[0].Count;
-            if (amountOfColumnsInFirstMatrix != amountOfRowsInSecondMatrix)
-            {
-                throw new ApplicationException();
-            }
             if (firstRow < 0 || lastRow < firstRow || lastRow > amountOfRowsInFirstMatrix)
             {
-                throw new ApplicationException();
+                throw new ApplicationException("Invalid interval of computing");
             }
             for (int indexOfRowInFirstMatrix = firstRow; indexOfRowInFirstMatrix < lastRow; ++indexOfRowInFirstMatrix)
             {

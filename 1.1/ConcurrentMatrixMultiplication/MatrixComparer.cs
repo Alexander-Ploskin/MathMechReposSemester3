@@ -1,11 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace ConcurrentMatrixMultiplication
 {
-    class MatrixComparercs
+    /// <summary>
+    /// Incapsulates methods of matrix comparing
+    /// </summary>
+    class MatrixComparer
     {
+        /// <summary>
+        /// Compares two matrices
+        /// </summary>
+        /// <param name="firstMatrix">first matrix</param>
+        /// <param name="secondMatrix">second matrix</param>
+        /// <returns></returns>
         public static bool Compare(List<List<int>> firstMatrix, List<List<int>> secondMatrix)
         {
             var amountOfRowsInFirstMatrix = firstMatrix.Count;

@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.WebSockets;
-using System.Runtime.Serialization.Formatters;
-using System.Text;
 
 namespace ConcurrentMatrixMultiplication
 {
-    class SequentiallyMatrixMuliplier
+    /// <summary>
+    /// Incapsulated methods of sequential matrix multiplication
+    /// </summary>
+    class SequentialMatrixMuliplier
     {
+        /// <summary>
+        /// Multiplies 2 matrices sequentally
+        /// </summary>
+        /// <param name="firstMatrix">first matrix</param>
+        /// <param name="secondMatrix">second matrix</param>
+        /// <returns>New matrix</returns>
         public static List<List<int>> Multiply(List<List<int>> firstMatrix, List<List<int>> secondMatrix)
         {
             var amountOfRowsInFirstMatrix = firstMatrix.Count;
@@ -20,7 +26,7 @@ namespace ConcurrentMatrixMultiplication
             var amountOfColumnsInSecondMatrix = secondMatrix[0].Count;
             if (amountOfColumnsInFirstMatrix != amountOfRowsInSecondMatrix)
             {
-                throw new ApplicationException();
+                throw new ApplicationException("Amount of columns in first matrix must to be equal to amount of rows in second matrix");
             }
             var resut = new List<List<int>>();
 

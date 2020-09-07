@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Text;
-using System.Xml.Schema;
 
 namespace ConcurrentMatrixMultiplication
 {
-    static class MatrixReader
+    /// <summary>
+    /// Incapsulated methods of reading matrices from file
+    /// </summary>
+    static class MatrixFileIO
     {
-        public static List<List<int>> ReadMatrix(string path)
+        /// <summary>
+        /// Reads matrix from file
+        /// </summary>
+        /// <param name="path">Path of the file</param>
+        /// <returns>Matrix representated by generic list</returns>
+        public static List<List<int>> ReadMatrixFromFile(string path)
         {
             using (var sr = new StreamReader(path))
             {
@@ -19,6 +24,38 @@ namespace ConcurrentMatrixMultiplication
             }
         }
 
+        /// <summary>
+        /// Writes matrix to the file
+        /// </summary>
+        /// <param name="matrix">Matrix, that will be wrote to the file</param>
+        /// <param name="path">Path of the new file</param>
+        public static void WriteMatrixToFile(List<List<int>> matrix, string path)
+        {
+            try
+            {
+                using (var sw = new StreamWriter(path, false, System.Text.Encoding.Default))
+                {
+                    foreach (var row in matrix)
+                    {
+                        foreach (var element in row)
+                        {
+                            sw.Write(element.ToString() + " ");
+                        }
+                        sw.Write("\r\n");
+                    }
+                }
+            }
+            catch (IOException)
+            {
+                Console.WriteLine("Invalid path");
+            }
+        }
+
+        /// <summary>
+        /// Parses file matrix representation
+        /// </summary>
+        /// <param name="characters">Chatacters from fiile</param>
+        /// <returns>Matrix representated by generic list</returns>
         private static List<List<int>> ParseCharacters(string characters)
         {
             int currentIndex = 0;
@@ -39,6 +76,12 @@ namespace ConcurrentMatrixMultiplication
             return matrix;
         }
 
+        /// <summary>
+        /// Parses row of matrix
+        /// </summary>
+        /// <param name="characters">Characters from file</param>
+        /// <param name="currentIndex">Current place of reading</param>
+        /// <returns>Row of new matrix</returns>
         private static List<int> ParseRow(string characters, ref int currentIndex)
         {
             int currentStatement = 0;
@@ -48,9 +91,10 @@ namespace ConcurrentMatrixMultiplication
             {
                 var newToken = characters[currentIndex];
                 currentIndex++;
+                //FSA recognizer of matrix row
                 switch (currentStatement)
                 {
-                    case 0:
+                    case 0:   //Waiting new number state
                         {
                             if (char.IsDigit(newToken))
                             {
@@ -65,7 +109,7 @@ namespace ConcurrentMatrixMultiplication
                             }
                             throw new ApplicationException();
                         }
-                    case 1:
+                    case 1:   //Inputing new number state
                         {
                             if (char.IsDigit(newToken))
                             {
@@ -97,7 +141,7 @@ namespace ConcurrentMatrixMultiplication
                             }
                             throw new ApplicationException();
                         }
-                    case 2:
+                    case 2:  //Ending of row state
                         {
                             if (newToken == '\n')
                             {
