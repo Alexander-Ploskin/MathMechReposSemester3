@@ -16,8 +16,8 @@ namespace ConcurrentMatrixMultiplication
             for (int i = 1; i <= 10; ++i)
             {
                 var size = i * 70;
-                var matrix1 = MatrixGenerator.Genetate(size, size);
-                var matrix2 = MatrixGenerator.Genetate(size, size);
+                var matrix1 = MatrixGenerator.GenerateRandomMatrix(size, size);
+                var matrix2 = MatrixGenerator.GenerateRandomMatrix(size, size);
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
                 SequentialMatrixMuliplier.Multiply(matrix1, matrix2);
@@ -43,7 +43,8 @@ namespace ConcurrentMatrixMultiplication
             var matrix3 = ConcurrentMatrixMultiplier.Multiply(matrix1, matrix2);
             MatrixFileIO.WriteMatrixToFile(matrix3, Environment.CurrentDirectory.TrimEnd(@"\bin\Debug\netcoreapp3.1".ToCharArray()) + @"ication\Matrix3.txt");
             Console.WriteLine("Product of matrix1 and matrix2 wrote in the file");
-            Console.WriteLine($"Paralleling makes { AnalyzeBoost() } times boost average");
+            Console.WriteLine("Calculating...");
+            Console.WriteLine($"Paralleling makes average { AnalyzeBoost() } times boost");
         }
     }
 }

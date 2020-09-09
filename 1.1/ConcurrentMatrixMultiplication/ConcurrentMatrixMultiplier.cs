@@ -7,7 +7,7 @@ namespace ConcurrentMatrixMultiplication
     /// <summary>
     /// Incapsulated methods of concurrent matrix multiplication
     /// </summary>
-    class ConcurrentMatrixMultiplier
+    public class ConcurrentMatrixMultiplier
     {
         /// <summary>
         /// Multiplies 2 matrices concurrently
@@ -27,7 +27,7 @@ namespace ConcurrentMatrixMultiplication
             var amountOfColumnsInSecondMatrix = secondMatrix[0].Count;
             if (amountOfColumnsInFirstMatrix != amountOfRowsInSecondMatrix)
             {
-                throw new ApplicationException();
+                throw new ArgumentException("Amount of columns in first matrix must to be equal to amount of rows in second matrix");
             }
 
             const int baseAmountOfThreads = 8;

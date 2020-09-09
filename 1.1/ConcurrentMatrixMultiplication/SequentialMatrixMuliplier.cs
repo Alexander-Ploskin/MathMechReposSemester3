@@ -6,7 +6,7 @@ namespace ConcurrentMatrixMultiplication
     /// <summary>
     /// Incapsulated methods of sequential matrix multiplication
     /// </summary>
-    class SequentialMatrixMuliplier
+    public class SequentialMatrixMuliplier
     {
         /// <summary>
         /// Multiplies 2 matrices sequentally
@@ -26,7 +26,7 @@ namespace ConcurrentMatrixMultiplication
             var amountOfColumnsInSecondMatrix = secondMatrix[0].Count;
             if (amountOfColumnsInFirstMatrix != amountOfRowsInSecondMatrix)
             {
-                throw new ApplicationException("Amount of columns in first matrix must to be equal to amount of rows in second matrix");
+                throw new ArgumentException("Amount of columns in first matrix must to be equal to amount of rows in second matrix");
             }
             var resut = new List<List<int>>();
 

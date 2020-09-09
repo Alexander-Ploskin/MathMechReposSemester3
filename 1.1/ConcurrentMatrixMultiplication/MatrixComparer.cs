@@ -5,7 +5,7 @@ namespace ConcurrentMatrixMultiplication
     /// <summary>
     /// Incapsulates methods of matrix comparing
     /// </summary>
-    class MatrixComparer
+    public class MatrixComparer
     {
         /// <summary>
         /// Compares two matrices
@@ -17,6 +17,10 @@ namespace ConcurrentMatrixMultiplication
         {
             var amountOfRowsInFirstMatrix = firstMatrix.Count;
             var amountOfRowsInSecondMatrix = secondMatrix.Count;
+            if (amountOfRowsInFirstMatrix == 0 && amountOfRowsInSecondMatrix == 0)
+            {
+                return true;
+            }
             var amountOfColumnsInFirstMatrix = firstMatrix[0].Count;
             var amountOfColumnsInSecondMatrix = secondMatrix[0].Count;
             if (amountOfColumnsInFirstMatrix != amountOfColumnsInSecondMatrix || amountOfRowsInFirstMatrix != amountOfRowsInSecondMatrix)
