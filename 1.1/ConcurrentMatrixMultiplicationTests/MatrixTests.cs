@@ -16,29 +16,15 @@ namespace ConcurrentMatrixMultiplicationTests
         }
 
         [Test]
-        public void InvalidPathTest() => Assert.Throws<ArgumentException>(() => new Matrix("sgggsdgfsdggfweg"));
-
-        [Test]
-        public void ReadFromFileTest()
-        {
-            var matrix1 = new Matrix(Environment.CurrentDirectory.TrimEnd(@"ConcurrentMatrixMultiplicationTests\bin\Debug\netcoreapp3.1".ToCharArray()) + $@"\ConcurrentMatrixMultiplication\Matrix1.txt");
-            var matrix2 = new Matrix(new int[,] {
-                { 1, 2, 3 },
-                { 1, 2, 3 }
-            });
-            Assert.IsTrue(MatrixComparer.Compare(matrix1, matrix2));
-        }
-
-        [Test]
-        public void WriteToFileTest()
+        public void WorkWithFileTest()
         {
             var matrix1 = new Matrix(new int[,] {
                 { 1, 2, 3 },
                 { 1, 2, 3 }
             });
-            string path = Environment.CurrentDirectory.TrimEnd(@"ConcurrentMatrixMultiplicationTests\bin\Debug\netcoreapp3.1".ToCharArray()) + $@"\ConcurrentMatrixMultiplication\Matrix1.txt";
-            matrix1.WriteToFile(path);
-            var matrix2 = new Matrix(path);
+  
+            matrix1.WriteToFile("Matrix1.txt");
+            var matrix2 = new Matrix("Matrix1.txt");
             Assert.IsTrue(MatrixComparer.Compare(matrix1, matrix2));
         }
 
