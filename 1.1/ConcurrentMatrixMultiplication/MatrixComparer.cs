@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-
-namespace ConcurrentMatrixMultiplication
+﻿namespace ConcurrentMatrixMultiplication
 {
     /// <summary>
     /// Incapsulates methods of matrix comparing
     /// </summary>
-    public class MatrixComparer
+    public static class MatrixComparer
     {
         /// <summary>
         /// Compares two matrices
@@ -13,25 +11,17 @@ namespace ConcurrentMatrixMultiplication
         /// <param name="firstMatrix">first matrix</param>
         /// <param name="secondMatrix">second matrix</param>
         /// <returns></returns>
-        public static bool Compare(List<List<int>> firstMatrix, List<List<int>> secondMatrix)
+        public static bool Compare(Matrix firstMatrix, Matrix secondMatrix)
         {
-            var amountOfRowsInFirstMatrix = firstMatrix.Count;
-            var amountOfRowsInSecondMatrix = secondMatrix.Count;
-            if (amountOfRowsInFirstMatrix == 0 && amountOfRowsInSecondMatrix == 0)
-            {
-                return true;
-            }
-            var amountOfColumnsInFirstMatrix = firstMatrix[0].Count;
-            var amountOfColumnsInSecondMatrix = secondMatrix[0].Count;
-            if (amountOfColumnsInFirstMatrix != amountOfColumnsInSecondMatrix || amountOfRowsInFirstMatrix != amountOfRowsInSecondMatrix)
+            if (firstMatrix.Width != secondMatrix.Width || firstMatrix.Height != secondMatrix.Height) 
             {
                 return false;
             }
-            for (int i = 0; i < amountOfRowsInFirstMatrix; ++i)
+            for (int i = 0; i < firstMatrix.Height; ++i)
             {
-                for (int j = 0; j < amountOfColumnsInFirstMatrix; ++j)
+                for (int j = 0; j < firstMatrix.Width; ++j)
                 {
-                    if (firstMatrix[i][j] != secondMatrix[i][j])
+                    if (firstMatrix[i, j] != secondMatrix[i, j])
                     {
                         return false;
                     }

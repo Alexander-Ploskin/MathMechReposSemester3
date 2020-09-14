@@ -13,37 +13,33 @@ namespace ConcurrentMatrixMultiplication
         {
             double spentTimeSequentally = 0;
             double spentTimeConcurrently = 0;
-            for (int i = 1; i <= 10; ++i)
+            for (int i = 1; i <= 12; ++i)
             {
                 var size = i * 70;
-                var matrix1 = MatrixGenerator.GenerateRandomMatrix(size, size);
-                var matrix2 = MatrixGenerator.GenerateRandomMatrix(size, size);
+                var matrix1 = new Matrix(size, size);
+                var matrix2 = new Matrix(size, size);
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
-                SequentialMatrixMuliplier.Multiply(matrix1, matrix2);
+                MatrixMultiplier.MultiplySequentally(matrix1, matrix2);
                 stopwatch.Stop();
                 spentTimeSequentally += stopwatch.ElapsedMilliseconds;
                 stopwatch.Reset();
                 stopwatch.Start();
-                ConcurrentMatrixMultiplier.Multiply(matrix1, matrix2);
+                MatrixMultiplier.MultiplyConcurrentally(matrix1, matrix2);
                 stopwatch.Stop();
                 spentTimeConcurrently += stopwatch.ElapsedMilliseconds;
             }
             return spentTimeSequentally / spentTimeConcurrently;
         }
 
-        /// <summary>
-        /// Main func
-        /// </summary>
-        /// <param name="args">Args</param>
         static void Main(string[] args)
         {
-            var matrix1 = MatrixFileIO.ReadMatrixFromFile(Environment.CurrentDirectory.TrimEnd(@"\bin\Debug\netcoreapp3.1".ToCharArray()) + @"ication\Matrix1.txt");
-            var matrix2 = MatrixFileIO.ReadMatrixFromFile(Environment.CurrentDirectory.TrimEnd(@"\bin\Debug\netcoreapp3.1".ToCharArray()) + @"ication\Matrix2.txt");
-            var matrix3 = ConcurrentMatrixMultiplier.Multiply(matrix1, matrix2);
-            MatrixFileIO.WriteMatrixToFile(matrix3, Environment.CurrentDirectory.TrimEnd(@"\bin\Debug\netcoreapp3.1".ToCharArray()) + @"ication\Matrix3.txt");
+            var firstMatrix = new Matrix(PathGenerator.GetPathByName("Matrix1.txt"));
+            var secondMatrix = new Matrix(PathGenerator.GetPathByName("Matrix2.txt"));
+            var resultMatrix = MatrixMultiplier.MultiplyConcurrentally(firstMatrix, secondMatrix);
+            resultMatrix.WriteToFile(PathGenerator.GetPathByName("Matrix3.txt"));
             Console.WriteLine("Product of matrix1 and matrix2 wrote in the file");
-            Console.WriteLine("Calculating...");
+            Console.WriteLine("Calculating boost...");
             Console.WriteLine($"Paralleling makes average { AnalyzeBoost() } times boost");
         }
     }
