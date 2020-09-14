@@ -40,12 +40,12 @@ namespace ConcurrentMatrixMultiplication
         /// <summary>
         /// Creates the new matrix with values from the file
         /// </summary>
-        /// <param name="filePath">Path</param>
-        public Matrix(string filePath)
+        /// <param name="fileName">Name of the file</param>
+        public Matrix(string fileName)
         {
             try
             {
-                using (var sr = new StreamReader(filePath))
+                using (var sr = new StreamReader(fileName))
                 {
                     var characters = sr.ReadToEnd();
                     var elements = ParseCharacters(characters);
@@ -124,7 +124,7 @@ namespace ConcurrentMatrixMultiplication
                 {
                     case 0:   //Waiting new number state
                         {
-                            if (char.IsDigit(newToken))
+                            if (char.IsDigit(newToken) || newToken == '-')
                             {
                                 newNumber += newToken;
                                 currentStatement = 1;
@@ -199,26 +199,19 @@ namespace ConcurrentMatrixMultiplication
         /// Writes matrix to the file
         /// </summary>
         /// <param name="matrix">Matrix, that will be wrote to the file</param>
-        /// <param name="path">Path of the new file</param>
-        public void WriteToFile(string path)
+        /// <param name="fileName">Path of the new file</param>
+        public void WriteToFile(string fileName)
         {
-            try
+            using (var sw = new StreamWriter(fileName, false, System.Text.Encoding.Default))
             {
-                using (var sw = new StreamWriter(path, false, System.Text.Encoding.Default))
+                for (int i = 0; i < Height; ++i)
                 {
-                    for (int i = 0; i < Height; ++i)
+                    for (int j = 0; j < Width; ++j)
                     {
-                        for (int j = 0; j < Width; ++j)
-                        {
-                            sw.Write(values[i, j].ToString() + " ");
-                        }
-                        sw.Write("\r\n");
+                        sw.Write(values[i, j].ToString() + " ");
                     }
+                    sw.Write("\r\n");
                 }
-            }
-            catch (IOException)
-            {
-                throw new ArgumentException("Invalid path!");
             }
         }
 

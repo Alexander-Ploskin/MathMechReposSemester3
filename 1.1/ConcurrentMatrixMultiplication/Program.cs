@@ -34,10 +34,14 @@ namespace ConcurrentMatrixMultiplication
 
         static void Main(string[] args)
         {
-            var firstMatrix = new Matrix(PathGenerator.GetPathByName("Matrix1.txt"));
-            var secondMatrix = new Matrix(PathGenerator.GetPathByName("Matrix2.txt"));
+            var firstMatrix = new Matrix(10, 10);
+            var secondMatrix = new Matrix(10, 10);
+            firstMatrix.WriteToFile("Matrix1");
+            secondMatrix.WriteToFile("Matrix2");
+            firstMatrix = new Matrix("Matrix1");
+            secondMatrix = new Matrix("Matrix2");
             var resultMatrix = MatrixMultiplier.MultiplyConcurrentally(firstMatrix, secondMatrix);
-            resultMatrix.WriteToFile(PathGenerator.GetPathByName("Matrix3.txt"));
+            resultMatrix.WriteToFile("Matrix3.txt");
             Console.WriteLine("Product of matrix1 and matrix2 wrote in the file");
             Console.WriteLine("Calculating boost...");
             Console.WriteLine($"Paralleling makes average { AnalyzeBoost() } times boost");
