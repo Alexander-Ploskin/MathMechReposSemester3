@@ -105,6 +105,17 @@ namespace ConcurrentMatrixMultiplication
         }
 
         /// <summary>
+        /// Statements of the FSA parser of matrix rows
+        /// </summary>
+        private enum RowParserStatements
+        {
+            FirstDigit,
+            RestOfNumber,
+            EndOfRow
+        }
+
+
+        /// <summary>
         /// Parses row of matrix
         /// </summary>
         /// <param name="characters">Characters from file</param>
@@ -112,7 +123,7 @@ namespace ConcurrentMatrixMultiplication
         /// <returns>Row of new matrix</returns>
         private static List<int> ParseRow(string characters, ref int currentIndex)
         {
-            int currentStatement = 0;
+            var currentStatement = RowParserStatements.FirstDigit;
             var row = new List<int>();
             string newNumber = "";
             while (currentIndex < characters.Length)
@@ -122,12 +133,12 @@ namespace ConcurrentMatrixMultiplication
                 //FSA recognizer of matrix row
                 switch (currentStatement)
                 {
-                    case 0:   //Waiting new number state
+                    case RowParserStatements.FirstDigit:
                         {
                             if (char.IsDigit(newToken) || newToken == '-')
                             {
                                 newNumber += newToken;
-                                currentStatement = 1;
+                                currentStatement = RowParserStatements.RestOfNumber;
                                 if (currentIndex == characters.Length)
                                 {
                                     row.Add(int.Parse(newNumber));
@@ -141,12 +152,12 @@ namespace ConcurrentMatrixMultiplication
                             }
                             if (newToken == '\r')
                             {
-                                currentStatement = 2;
+                                currentStatement = RowParserStatements.EndOfRow;
                                 break;
                             }
                             throw new ApplicationException("Incorrect file");
                         }
-                    case 1:   //Inputing new number state
+                    case RowParserStatements.RestOfNumber:
                         {
                             if (char.IsDigit(newToken))
                             {
@@ -173,12 +184,16 @@ namespace ConcurrentMatrixMultiplication
                             {
                                 row.Add(int.Parse(newNumber));
                                 newNumber = "";
-                                currentStatement = 2;
+                                currentStatement = RowParserStatements.RestOfNumber;
                                 break;
+                            }
+                            if (newToken == '\n')
+                            {
+                                return row;
                             }
                             throw new ApplicationException();
                         }
-                    case 2:  //Ending of row state
+                    case RowParserStatements.EndOfRow:
                         {
                             if (newToken == '\n')
                             {

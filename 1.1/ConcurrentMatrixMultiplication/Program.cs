@@ -25,7 +25,7 @@ namespace ConcurrentMatrixMultiplication
                 spentTimeSequentally += stopwatch.ElapsedMilliseconds;
                 stopwatch.Reset();
                 stopwatch.Start();
-                MatrixMultiplier.MultiplyConcurrentally(matrix1, matrix2);
+                MatrixMultiplier.MultiplyConcurrentlly(matrix1, matrix2);
                 stopwatch.Stop();
                 spentTimeConcurrently += stopwatch.ElapsedMilliseconds;
             }
@@ -40,7 +40,7 @@ namespace ConcurrentMatrixMultiplication
             secondMatrix.WriteToFile("Matrix2");
             firstMatrix = new Matrix("Matrix1");
             secondMatrix = new Matrix("Matrix2");
-            var resultMatrix = MatrixMultiplier.MultiplyConcurrentally(firstMatrix, secondMatrix);
+            var resultMatrix = MatrixMultiplier.MultiplyConcurrentlly(firstMatrix, secondMatrix);
             resultMatrix.WriteToFile("Matrix3.txt");
             Console.WriteLine("Product of matrix1 and matrix2 wrote in the file");
             Console.WriteLine("Calculating boost...");
