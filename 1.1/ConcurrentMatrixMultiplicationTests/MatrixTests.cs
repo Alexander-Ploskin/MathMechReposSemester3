@@ -4,7 +4,6 @@ namespace ConcurrentMatrixMultiplicationTests
 {
     using ConcurrentMatrixMultiplication;
     using System;
-    using System.IO;
 
     class MatrixTests
     {
