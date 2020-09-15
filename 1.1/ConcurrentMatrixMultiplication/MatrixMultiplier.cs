@@ -38,12 +38,12 @@ namespace ConcurrentMatrixMultiplication
         }
 
         /// <summary>
-        /// Multiplies 2 matrices concurrentlly
+        /// Multiplies 2 matrices concurrently
         /// </summary>
         /// <param name="firstMatrix">first matrix</param>
         /// <param name="secondMatrix">second matrix</param>
         /// <returns>New matrix</returns>
-        public static Matrix MultiplyConcurrentlly(Matrix firstMatrix, Matrix secondMatrix)
+        public static Matrix MultiplyConcurrently(Matrix firstMatrix, Matrix secondMatrix)
         {
             if (firstMatrix.Width != secondMatrix.Height)
             {

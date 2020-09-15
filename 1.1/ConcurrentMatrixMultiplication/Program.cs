@@ -5,31 +5,59 @@ namespace ConcurrentMatrixMultiplication
 {
     class Program
     {
-        /// <summary>
-        /// Measures boost by paralleling, using 10 random square matrix 
-        /// </summary>
-        /// <returns>Number of times that paralleling boosts multiplication</returns>
-        private static double AnalyzeBoost()
+        private static (TimeSpan averageTime, TimeSpan averageDeviation) MatrixMultiplicationStopwatch(int size, int numberOfExperiments, Func<Matrix, Matrix, Matrix> multiply)
         {
-            double spentTimeSequentally = 0;
-            double spentTimeConcurrently = 0;
-            for (int i = 1; i <= 12; ++i)
+            var stopwatch = new Stopwatch();
+            var results = new TimeSpan[numberOfExperiments];
+            for (int i = 0; i < numberOfExperiments; ++i)
             {
-                var size = i * 70;
+                results[i] = TimeSpan.Zero;
+            }
+
+            for (int i = 0; i < numberOfExperiments; ++i)
+            {
                 var matrix1 = new Matrix(size, size);
                 var matrix2 = new Matrix(size, size);
-                var stopwatch = new Stopwatch();
-                stopwatch.Start();
-                MatrixMultiplier.MultiplySequentally(matrix1, matrix2);
+                stopwatch.Restart();
+                multiply(matrix1, matrix2);
                 stopwatch.Stop();
-                spentTimeSequentally += stopwatch.ElapsedMilliseconds;
-                stopwatch.Reset();
-                stopwatch.Start();
-                MatrixMultiplier.MultiplyConcurrentlly(matrix1, matrix2);
-                stopwatch.Stop();
-                spentTimeConcurrently += stopwatch.ElapsedMilliseconds;
+                results[i] = stopwatch.Elapsed;
             }
-            return spentTimeSequentally / spentTimeConcurrently;
+
+            var averageTime = TimeSpan.Zero;
+            for (int i = 0; i < numberOfExperiments; ++i)
+            {
+                averageTime += results[i];
+            }
+            averageTime /= numberOfExperiments;
+
+            var averageDeviation = TimeSpan.Zero;
+            for (int i = 0; i < numberOfExperiments; ++i)
+            {
+                var deviation = results[i] - averageTime;
+                averageDeviation += deviation > TimeSpan.Zero ? deviation : -deviation;
+            }
+            averageDeviation /= numberOfExperiments;
+
+            return (averageTime, averageDeviation);
+        }
+        /// <summary>
+        /// Analizes time that spent by concurrent and sequental multiplication
+        /// </summary>
+        /// <returns>Number of times that paralleling boosts multiplication</returns>
+        private static void AnalyzeBoost()
+        {
+            Console.WriteLine("Calculatig boost...");
+
+            const int numberOfExperiments = 10;
+            const int size = 600;
+            var results = MatrixMultiplicationStopwatch(size, numberOfExperiments, MatrixMultiplier.MultiplySequentally);
+            Console.WriteLine($"Matrices {size}×{size} multiplies sequentally for " +
+                $"{results.averageTime.TotalSeconds} +/- {results.averageDeviation.TotalSeconds} seconds");
+
+            results = MatrixMultiplicationStopwatch(size, numberOfExperiments, MatrixMultiplier.MultiplyConcurrently);
+            Console.WriteLine($"Matrices {size}×{size} multiplies concurrently for " +
+                $"{results.averageTime.TotalSeconds} +/- {results.averageDeviation.TotalSeconds} seconds");
         }
 
         static void Main(string[] args)
@@ -40,11 +68,10 @@ namespace ConcurrentMatrixMultiplication
             secondMatrix.WriteToFile("Matrix2");
             firstMatrix = new Matrix("Matrix1");
             secondMatrix = new Matrix("Matrix2");
-            var resultMatrix = MatrixMultiplier.MultiplyConcurrentlly(firstMatrix, secondMatrix);
+            var resultMatrix = MatrixMultiplier.MultiplyConcurrently(firstMatrix, secondMatrix);
             resultMatrix.WriteToFile("Matrix3.txt");
             Console.WriteLine("Product of matrix1 and matrix2 wrote in the file");
-            Console.WriteLine("Calculating boost...");
-            Console.WriteLine($"Paralleling makes average { AnalyzeBoost() } times boost");
+            AnalyzeBoost();
         }
     }
 }
