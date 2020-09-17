@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ConcurrentLazyEvaluation\MyLazy.csproj" />
+    <ProjectReference Include="..\MyLazy\MyLazy.csproj" />
   </ItemGroup>
 
 </Project>
