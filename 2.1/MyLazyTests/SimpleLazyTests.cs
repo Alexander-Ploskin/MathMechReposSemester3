@@ -26,5 +26,19 @@ namespace MyLazyTests
             Assert.AreEqual(firstResult, secondResult);
         }
 
+        [Test]
+        public void CalculatingNullFunctionTest()
+        {
+            Assert.Throws<ArgumentNullException>(() => LazyFactory<object>.CreateSimpleLazy(null));
+        }
+
+        [Test]
+        public void CalculateFuncThatReturnsNullTest()
+        {
+            var lazy = LazyFactory<object>.CreateSimpleLazy(() => null);
+            var result = lazy.Get();
+            Assert.AreEqual(null, result);
+        }
+
     }
 }

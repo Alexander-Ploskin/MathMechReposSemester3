@@ -29,16 +29,41 @@ namespace MyLazyTests
         [Test]
         public void ManyThreadsTest()
         {
-            var lazy = LazyFactory<DateTime>.CreateConcurrentLazy(() => DateTime.Now);
-            var firstResult = DateTime.Now;
-            var secondResult = DateTime.Now;
-            var firstThread = new Thread(() => firstResult = lazy.Get());
-            var secondThread = new Thread(() => secondResult = lazy.Get());
-            firstThread.Start();
-            secondThread.Start();
-            firstThread.Join();
-            secondThread.Join();
-            Assert.AreEqual(firstResult, secondResult);
+            var lazy = LazyFactory<Thread>.CreateConcurrentLazy(() => Thread.CurrentThread);
+            const int numberOfThreads = 10;
+            var threads = new Thread[numberOfThreads];
+            var results = new Thread[numberOfThreads];
+            for (int i = 0; i < numberOfThreads; ++i)
+            {
+                var localI = i;
+                threads[localI] = new Thread(() => results[localI] = lazy.Get());
+                threads[localI].Start();
+            }
+            
+            for (int i = 0; i < numberOfThreads; ++i)
+            {
+                threads[i].Join();
+            }
+            
+            for (int i = 0; i < numberOfThreads; ++i)
+            {
+                Assert.AreSame(results[0], results[i]);
+            }
         }
+
+        [Test]
+        public void CalculatingNullFunctionTest()
+        {
+            Assert.Throws<ArgumentNullException>(() => LazyFactory<object>.CreateSimpleLazy(null));
+        }
+
+        [Test]
+        public void CalculateFuncThatReturnsNullTest()
+        {
+            var lazy = LazyFactory<object>.CreateSimpleLazy(() => null);
+            var result = lazy.Get();
+            Assert.AreEqual(null, result);
+        }
+
     }
 }

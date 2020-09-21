@@ -12,14 +12,14 @@ namespace MyLazy
         {
             if (supplier == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(supplier));
             }
             this.supplier = supplier;
         }
 
         private readonly Object lockObject = new Object();
 
-        private readonly Func<T> supplier;
+        private  Func<T> supplier;
 
         private T result = default(T);
 
@@ -36,7 +36,7 @@ namespace MyLazy
                 return result;
             }
 
-            lock(lockObject)
+            lock (lockObject)
             {
                 if (calculated)
                 {
@@ -44,6 +44,7 @@ namespace MyLazy
                 }
 
                 result = supplier();
+                supplier = null;
                 calculated = true;
                 return result;
             }

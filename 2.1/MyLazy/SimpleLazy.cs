@@ -21,7 +21,7 @@ namespace MyLazy
             this.supplier = supplier;
         }
 
-        private readonly Func<T> supplier;
+        private Func<T> supplier;
 
         private T result = default(T);
 
@@ -38,6 +38,7 @@ namespace MyLazy
                 return result;
             }
             result = supplier();
+            supplier = null;
             calculated = true;
             return result;
         }
