@@ -5,6 +5,14 @@ before_build:
       $ErrorActionPreference = "Stop"
       $directory_path = "$env:APPVEYOR_BUILD_FOLDER\"
       $solutions = Get-ChildItem -Path $directory_path -Recurse -Include *.sln
+      foreach ($solution in $solutions) 
+      {
+        nuget restore $solution
+        if ($LastExitCode -ne 0) 
+        { 
+          $host.SetShouldExit($LastExitCode)  
+        }
+      }
 build_script:
   - ps: |
       foreach ($solution in $solutions) 
