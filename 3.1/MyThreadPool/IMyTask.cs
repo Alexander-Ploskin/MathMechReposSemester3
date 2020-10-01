@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MyThreadPool
 {
-    interface IMyTask<T>
+    public interface IMyTask<out TResult>
     {
         bool IsCompleted { get; }
 
-        T Result { get; }
+        TResult Result { get; }
 
-        Func<TResult, TNewResult> 
+        IMyTask<TNewResult> ContinueWith<TNewResult>(Func<TResult, TNewResult> newFunc);
+
     }
 }
