@@ -9,7 +9,7 @@ namespace MyThreadPoolTests
     class MyThreadPoolTests
     {
         private MyThreadPool threadPool;
-        private readonly int threadCount = Environment.ProcessorCount;
+        private readonly int threadCount = 8;
 
         [SetUp]
         public void SetUp()
@@ -29,6 +29,7 @@ namespace MyThreadPoolTests
         {
             using var countDownEventForTestThread = new CountdownEvent(threadCount);
             using var blockTasks = new Mutex();
+            blockTasks.Close();
             var callsCount = 0;
 
             for (var i = 0; i < threadCount + 1; i++)
