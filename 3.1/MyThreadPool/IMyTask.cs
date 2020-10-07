@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace MyThreadPool
+namespace MyThreadPoolRealisation
 {
     /// <summary>
     /// Interfaces of tasks in the thread pool
     /// </summary>
     /// <typeparam name="TResult">The type of value, that returns from the function of the task</typeparam>
-    interface IMyTask<out TResult>
+    public interface IMyTask<out TResult>
     {
         /// <summary>
         /// Is func calculated
