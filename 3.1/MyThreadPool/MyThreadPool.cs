@@ -95,13 +95,7 @@ namespace MyThreadPoolRealisation
             }
 
             var task = new MyTask<TResult>(this, newFunc);
-
-            if (cancellationTokenSource.IsCancellationRequested)
-            {
-                throw new ApplicationException("Thread pool isn't taking new tasks");
-            }
-
-            waitingTasks.Enqueue(task.Run);
+            Submit(task);
             return task;
         }
 
