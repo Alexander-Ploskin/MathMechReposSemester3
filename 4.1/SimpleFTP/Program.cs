@@ -1,30 +1,29 @@
 ﻿using System;
-using System.Net;
+using System.Threading;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 
-namespace SimpleFTP
+namespace FTPClient
 {
     class Program
     {
         static void Main(string[] args)
         {
             const int port = 8888;
-            var listener = new TcpListener(IPAddress.Any, port);
-            listener.Start();
-            Console.WriteLine($"Listening on port {port}...");
-            using (var socket = listener.AcceptSocket())
+            using (var client = new TcpClient("localhost", port))
             {
-                var stream = new NetworkStream(socket);
-                var reader = new StreamReader(stream);
-                var data = reader.ReadLine();
-                Console.WriteLine($"Received: {data}");
-                Console.WriteLine($"Sending \"Hi!\"");
-                var writer = new StreamWriter(stream);
-                writer.Write("Hi!");
-                writer.Flush();
+                while (true)
+                {
+                    Console.WriteLine($"Sending to port {port}...");
+                    var stream = client.GetStream();
+                    var writer = new StreamWriter(stream);
+                    Console.WriteLine("Enter the message:");
+                    var message = Console.ReadLine();
+                    writer.WriteLine(message);
+                    writer.Flush();
+                }
             }
-            listener.Stop();
         }
     }
 }
