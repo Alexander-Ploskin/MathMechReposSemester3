@@ -6,7 +6,7 @@ namespace MyThreadPoolRealisation
     /// Implementation of queue, that is thread safety
     /// </summary>
     /// <typeparam name="T">Type of values in the queue</typeparam>
-    class ThreadSafetyQueue<T>
+    public class ThreadSafetyQueue<T>
     {
         private Queue<T> queue = new Queue<T>();
 
