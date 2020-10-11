@@ -28,8 +28,7 @@ namespace MyThreadPoolTests
         public void ThreadCountTest()
         {
             using var countDownEventForTestThread = new CountdownEvent(threadsCount);
-            using var mutex = new Mutex();
-            mutex.Close();
+            using var countDownEventForTasks = new CountdownEvent(1);
             int callsCount = 0;
             for (var i = 0; i < threadsCount * 2; i++)
             {
@@ -37,7 +36,7 @@ namespace MyThreadPoolTests
                 {
                     Interlocked.Increment(ref callsCount);
                     countDownEventForTestThread.Signal();
-                    mutex.WaitOne();
+                    countDownEventForTasks.Wait();
                     return true;
                 });
             }
