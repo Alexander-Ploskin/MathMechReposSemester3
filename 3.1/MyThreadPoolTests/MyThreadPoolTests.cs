@@ -57,45 +57,6 @@ namespace MyThreadPoolTests
         }
 
         [Test]
-        public void MultithreadingCalculationTest()
-        {
-            var numberOfThreads = Environment.ProcessorCount;
-            var threads = new Thread[numberOfThreads];
-            var results = new int[numberOfThreads];
-            using var countdownEvent = new CountdownEvent(1);
-
-            var numberOfCalls = 0;
-            var task = threadPool.Submit(() =>
-            {
-                countdownEvent.Wait();
-                Interlocked.Increment(ref numberOfCalls);
-                return 1;
-            });
-
-            for (var i = 0; i < threads.Length; i++)
-            {
-                var localI = i;
-                threads[i] = new Thread(() =>
-                {
-                    results[localI] = task.Result;
-                });
-                threads[i].Start();
-            }
-
-            countdownEvent.Signal();
-            foreach (var thread in threads)
-            {
-                thread.Join();
-            }
-
-            Assert.AreEqual(1, numberOfCalls);
-            foreach (var result in results)
-            {
-                Assert.AreEqual(1, result);
-            }
-        }
-
-        [Test]
         public void NotCompletedBeforeHaveResultTest()
         {
             var mutex = new Mutex();

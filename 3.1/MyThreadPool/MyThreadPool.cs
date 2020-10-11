@@ -94,17 +94,25 @@ namespace MyThreadPoolRealisation
                 throw new ArgumentNullException(nameof(newFunc));
             }
 
+            var task = new MyTask<TResult>(this, newFunc);
+
             if (cancellationTokenSource.IsCancellationRequested)
             {
                 throw new ApplicationException("Thread pool isn't taking new tasks");
             }
 
-            var task = new MyTask<TResult>(this, newFunc);
             waitingTasks.Enqueue(task.Run);
             return task;
         }
 
-        private void Submit<TResult>(MyTask<TResult> task) => waitingTasks.Enqueue(task.Run);
+        private void Submit<TResult>(MyTask<TResult> task)
+        {
+            if (cancellationTokenSource.IsCancellationRequested)
+            {
+                throw new ApplicationException("Thread pool isn't taking new tasks");
+            }
+            waitingTasks.Enqueue(task.Run);
+        }
 
         /// <summary>
         /// Implementation of IMyTask interface
@@ -139,6 +147,7 @@ namespace MyThreadPoolRealisation
 
             /// <summary>
             /// Result of the calculation
+            /// Blocks thread until result hasn't been ready
             /// </summary>
             public TResult Result
             {
@@ -189,11 +198,6 @@ namespace MyThreadPoolRealisation
                 if (newFunc == null)
                 {
                     throw new ArgumentNullException(nameof(newFunc));
-                }
-
-                if (threadPool.cancellationTokenSource.IsCancellationRequested)
-                {
-                    throw new ApplicationException("Thread pool isn't taking new tasks");
                 }
 
                 var newTask = new MyTask<TNewResult>(threadPool, () => newFunc(Result));
