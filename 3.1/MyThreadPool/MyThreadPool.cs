@@ -91,12 +91,12 @@ namespace MyThreadPoolRealisation
         {
             if (newFunc == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(newFunc));
             }
 
             if (cancellationTokenSource.IsCancellationRequested)
             {
-                throw new ApplicationException("Thread pool doesn't take new tasks");
+                throw new ApplicationException("Thread pool isn't taking new tasks");
             }
 
             var task = new MyTask<TResult>(this, newFunc);
@@ -127,7 +127,7 @@ namespace MyThreadPoolRealisation
             {
                 this.func = func;
                 this.threadPool = threadPool;
-                Result = default(TResult);
+                Result = default;
             }
 
             /// <summary>
@@ -135,7 +135,7 @@ namespace MyThreadPoolRealisation
             /// </summary>
             public bool IsCompleted { get; private set; }
 
-            private TResult result = default(TResult);
+            private TResult result = default;
 
             /// <summary>
             /// Result of the calculation
@@ -188,12 +188,12 @@ namespace MyThreadPoolRealisation
             {
                 if (newFunc == null)
                 {
-                    throw new ArgumentNullException();
+                    throw new ArgumentNullException(nameof(newFunc));
                 }
 
                 if (threadPool.cancellationTokenSource.IsCancellationRequested)
                 {
-                    throw new ApplicationException();
+                    throw new ApplicationException("Thread pool isn't taking new tasks");
                 }
 
                 var newTask = new MyTask<TNewResult>(threadPool, () => newFunc(Result));

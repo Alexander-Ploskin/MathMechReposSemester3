@@ -9,12 +9,12 @@ namespace MyThreadPoolTests
     class MyThreadPoolTests
     {
         private MyThreadPool threadPool;
-        private readonly int threadCount = 8;
+        private readonly int threadsCount = 8;
 
         [SetUp]
         public void SetUp()
         {
-            threadPool = new MyThreadPool(threadCount);
+            threadPool = new MyThreadPool(threadsCount);
         }
 
         [Test]
@@ -27,26 +27,23 @@ namespace MyThreadPoolTests
         [Test]
         public void ThreadCountTest()
         {
-            using var countDownEventForTestThread = new CountdownEvent(threadCount);
-            using var blockTasks = new Mutex();
-            blockTasks.Close();
-            var callsCount = 0;
-
-            for (var i = 0; i < threadCount + 1; i++)
+            using var countDownEventForTestThread = new CountdownEvent(threadsCount);
+            using var mutex = new Mutex();
+            mutex.Close();
+            int callsCount = 0;
+            for (var i = 0; i < threadsCount * 2; i++)
             {
                 threadPool.Submit(() =>
                 {
                     Interlocked.Increment(ref callsCount);
-
                     countDownEventForTestThread.Signal();
-                    blockTasks.WaitOne();
-
+                    mutex.WaitOne();
                     return true;
                 });
             }
 
             countDownEventForTestThread.Wait();
-            Assert.AreEqual(threadCount, callsCount);
+            Assert.AreEqual(threadsCount, callsCount);
         }
 
         [Test]
