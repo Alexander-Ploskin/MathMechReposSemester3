@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Collections.Concurrent;
 
 namespace MyThreadPoolRealisation
 {
@@ -21,7 +22,7 @@ namespace MyThreadPoolRealisation
         /// <summary>
         /// Tasks, that is waiting to be executed
         /// </summary>
-        private readonly ThreadSafetyQueue<Action> waitingTasks = new ThreadSafetyQueue<Action>();
+        private readonly ConcurrentQueue<Action> waitingTasks = new ConcurrentQueue<Action>();
 
         public readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
@@ -55,9 +56,10 @@ namespace MyThreadPoolRealisation
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    if (!waitingTasks.Empty)
+                    if (!waitingTasks.IsEmpty)
                     {
-                        waitingTasks.Dequeue().Invoke();
+                        waitingTasks.TryDequeue(out var task);
+                        task.Invoke();
                     }
                     else
                     {
@@ -68,7 +70,8 @@ namespace MyThreadPoolRealisation
                 {
                     try
                     {
-                        waitingTasks.Dequeue().Invoke();
+                        waitingTasks.TryDequeue(out var task);
+                        task.Invoke();
                     }
                     catch (InvalidOperationException) { }
                 }
@@ -117,7 +120,7 @@ namespace MyThreadPoolRealisation
             private readonly Func<TResult> func;
             private readonly MyThreadPool threadPool;
             private AggregateException aggregateException = null;
-            private readonly ThreadSafetyQueue<Action> transfersToThreadPool = new ThreadSafetyQueue<Action>();
+            private readonly ConcurrentQueue<Action> transfersToThreadPool = new ConcurrentQueue<Action>();
             private readonly CountdownEvent waitResult = new CountdownEvent(1);
 
             /// <summary>
@@ -172,9 +175,10 @@ namespace MyThreadPoolRealisation
                 }
                 finally
                 {
-                    while (!transfersToThreadPool.Empty)
+                    while (!transfersToThreadPool.IsEmpty)
                     {
-                        transfersToThreadPool.Dequeue().Invoke();
+                        transfersToThreadPool.TryDequeue(out var task);
+                        task.Invoke();
                     }
                     waitResult.Signal();
                     IsCompleted = true;
