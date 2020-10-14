@@ -68,12 +68,10 @@ namespace MyThreadPoolRealisation
                 }
                 else
                 {
-                    try
+                    if (waitingTasks.TryDequeue(out var task))
                     {
-                        waitingTasks.TryDequeue(out var task);
                         task.Invoke();
                     }
-                    catch (InvalidOperationException) { }
                 }
             }
         }
