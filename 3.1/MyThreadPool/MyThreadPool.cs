@@ -116,17 +116,7 @@ namespace MyThreadPoolRealisation
             return task;
         }
 
-        private void Submit<TResult>(MyTask<TResult> task)
-        {
-            try
-            {
-                waitingTasks.Add(task.Run, cancellationTokenSource.Token);
-            }
-            catch (OperationCanceledException)
-            {
-                throw new ApplicationException("Thread pool isn't taking new tasks");
-            }
-        }
+        private void Submit<TResult>(MyTask<TResult> task) => waitingTasks.Add(task.Run, cancellationTokenSource.Token);
 
         /// <summary>
         /// Implementation of IMyTask interface
@@ -214,19 +204,23 @@ namespace MyThreadPoolRealisation
                     throw new ArgumentNullException(nameof(newFunc));
                 }
 
-                var newTask = new MyTask<TNewResult>(threadPool, () => newFunc(Result));
+                if (threadPool.cancellationTokenSource.IsCancellationRequested)
+                {
+                    throw new ApplicationException("Thread pool isn't taking new tasks");
+                }
+
                 lock (transfersToThreadPool)
                 {
                     if (IsCompleted)
                     {
-                        threadPool.Submit(newTask);
+                        return threadPool.Submit(() => newFunc(Result));
                     }
                     else
                     {
+                        var newTask = new MyTask<TNewResult>(threadPool, () => newFunc(Result));
                         transfersToThreadPool.Enqueue(() => threadPool.Submit(newTask));
+                        return newTask;
                     }
-
-                    return newTask;
                 }
             }
 
