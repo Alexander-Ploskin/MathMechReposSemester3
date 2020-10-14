@@ -134,7 +134,7 @@ namespace MyThreadPoolRealisation
         /// <typeparam name="TResult">Type of value of function in the task</typeparam>
         private class MyTask<TResult> : IMyTask<TResult>
         {
-            private readonly Func<TResult> func;
+            private Func<TResult> func;
             private readonly MyThreadPool threadPool;
             private AggregateException aggregateException = null;
             private readonly ConcurrentQueue<Action> transfersToThreadPool = new ConcurrentQueue<Action>();
@@ -195,8 +195,9 @@ namespace MyThreadPoolRealisation
                     {
                         task.Invoke();
                     }
-                    waitResult.Signal();
+                    func = null;
                     IsCompleted = true;
+                    waitResult.Signal();
                 }
             }
 
