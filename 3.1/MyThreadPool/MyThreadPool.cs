@@ -17,7 +17,7 @@ namespace MyThreadPoolRealisation
         /// <summary>
         /// Tasks, that is waiting to be executed
         /// </summary>
-        private readonly ConcurrentQueue<Action> waitingTasks = new ConcurrentQueue<Action>();
+        private readonly BlockingCollection<Action> waitingTasks = new BlockingCollection<Action>();
 
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
@@ -50,9 +50,8 @@ namespace MyThreadPoolRealisation
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    if (!waitingTasks.IsEmpty)
+                    if (waitingTasks.TryTake(out var task))
                     {
-                        waitingTasks.TryDequeue(out var task);
                         task.Invoke();
                     }
                     else
@@ -62,10 +61,8 @@ namespace MyThreadPoolRealisation
                 }
                 else
                 {
-                    if (waitingTasks.TryDequeue(out var task))
-                    {
-                        task.Invoke();
-                    }
+                    var task = waitingTasks.Take();   ///Blocks thread until task is availiable
+                    task?.Invoke();
                 }
             }
         }
@@ -100,7 +97,7 @@ namespace MyThreadPoolRealisation
             {
                 throw new ApplicationException("Thread pool isn't taking new tasks");
             }
-            waitingTasks.Enqueue(task.Run);
+            waitingTasks.Add(task.Run);
         }
 
         /// <summary>
