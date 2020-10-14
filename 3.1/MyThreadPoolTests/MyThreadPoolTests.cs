@@ -209,7 +209,7 @@ namespace MyThreadPoolTests
         {
             var task = threadPool.Submit(() => true);
             threadPool.Shutdown();
-            Assert.That(() => task.ContinueWith(x => true), Throws.ApplicationException);
+            Assert.Throws<ApplicationException>(() => task.ContinueWith(x => true));
         }
 
     }
