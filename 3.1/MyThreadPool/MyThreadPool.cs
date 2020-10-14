@@ -21,6 +21,8 @@ namespace MyThreadPoolRealisation
 
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
+        private readonly CountdownEvent countdownEventForShutdown;
+
         /// <summary>
         /// Creates the new pool with the fixed number of threads
         /// </summary>
@@ -33,6 +35,7 @@ namespace MyThreadPoolRealisation
             }
 
             threads = new Thread[numberOfThreads];
+            countdownEventForShutdown = new CountdownEvent(threads.Length);
             for (int i = 0; i < numberOfThreads; ++i)
             {
                 threads[i] = new Thread(() => Run(cancellationTokenSource.Token));
@@ -56,6 +59,7 @@ namespace MyThreadPoolRealisation
                     }
                     else
                     {
+                        countdownEventForShutdown.Signal();
                         break;
                     }
                 }
@@ -71,7 +75,12 @@ namespace MyThreadPoolRealisation
         /// Shutdowns working of the pool
         /// Tasks, that already started doesn't terminate, but thread pool don't gets new tasks anymore
         /// </summary>
-        public void Shutdown() => cancellationTokenSource.Cancel();
+        public void Shutdown()
+        {
+            cancellationTokenSource.Cancel();
+            countdownEventForShutdown.Wait();
+        }
+
 
         /// <summary>
         /// Submits new function to thread pool
