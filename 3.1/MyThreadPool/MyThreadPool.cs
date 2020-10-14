@@ -24,7 +24,7 @@ namespace MyThreadPoolRealisation
         /// </summary>
         private readonly ConcurrentQueue<Action> waitingTasks = new ConcurrentQueue<Action>();
 
-        public readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
         /// <summary>
         /// Creates the new pool with the fixed number of threads
@@ -173,9 +173,8 @@ namespace MyThreadPoolRealisation
                 }
                 finally
                 {
-                    while (!transfersToThreadPool.IsEmpty)
+                    while (transfersToThreadPool.TryDequeue(out var task))
                     {
-                        transfersToThreadPool.TryDequeue(out var task);
                         task.Invoke();
                     }
                     waitResult.Signal();
