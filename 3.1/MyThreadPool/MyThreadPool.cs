@@ -10,11 +10,6 @@ namespace MyThreadPoolRealisation
     public class MyThreadPool
     {
         /// <summary>
-        /// Number of threads
-        /// </summary>
-        public int ThreadCount { get; }
-
-        /// <summary>
         /// Threads in the pool
         /// </summary>
         private readonly Thread[] threads;
@@ -37,7 +32,6 @@ namespace MyThreadPoolRealisation
                 throw new ArgumentOutOfRangeException("Number of threads must be natural number");
             }
 
-            ThreadCount = numberOfThreads;
             threads = new Thread[numberOfThreads];
             for (int i = 0; i < numberOfThreads; ++i)
             {
