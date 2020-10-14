@@ -215,16 +215,19 @@ namespace MyThreadPoolRealisation
                 }
 
                 var newTask = new MyTask<TNewResult>(threadPool, () => newFunc(Result));
-                if (IsCompleted)
+                lock (transfersToThreadPool)
                 {
-                    threadPool.Submit(newTask);
-                }
-                else
-                {
-                    transfersToThreadPool.Enqueue(() => threadPool.Submit(newTask));
-                }
+                    if (IsCompleted)
+                    {
+                        threadPool.Submit(newTask);
+                    }
+                    else
+                    {
+                        transfersToThreadPool.Enqueue(() => threadPool.Submit(newTask));
+                    }
 
-                return newTask;
+                    return newTask;
+                }
             }
 
         }
