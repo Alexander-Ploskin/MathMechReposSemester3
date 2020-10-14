@@ -210,7 +210,6 @@ namespace MyThreadPoolTests
             var task = threadPool.Submit(() => true);
             threadPool.Shutdown();
             Assert.Throws<ApplicationException>(() => task.ContinueWith(x => true));
-            Assert.Throws<NullReferenceException>(() => task.ContinueWith(x => true));
         }
 
     }

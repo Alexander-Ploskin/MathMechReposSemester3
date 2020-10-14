@@ -116,7 +116,17 @@ namespace MyThreadPoolRealisation
             return task;
         }
 
-        private void Submit<TResult>(MyTask<TResult> task) => waitingTasks.Add(task.Run);
+        private void Submit<TResult>(MyTask<TResult> task)
+        {
+            try
+            {
+                waitingTasks.Add(task.Run, cancellationTokenSource.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                throw new ApplicationException("Thread pool isn't taking new tasks");
+            }
+        }
 
         /// <summary>
         /// Implementation of IMyTask interface
@@ -134,12 +144,11 @@ namespace MyThreadPoolRealisation
             /// Base construtor of tasks
             /// </summary>
             /// <param name="threadPool">Thread pool, where my tasks  executes</param>
-            /// <param name="func"></param>
+            /// <param name="func">Func of the new task</param>
             public MyTask(MyThreadPool threadPool, Func<TResult> func)
             {
                 this.func = func;
                 this.threadPool = threadPool;
-                Result = default;
             }
 
             /// <summary>
@@ -147,7 +156,7 @@ namespace MyThreadPoolRealisation
             /// </summary>
             public bool IsCompleted { get; private set; }
 
-            private TResult result = default;
+            private TResult result;
 
             /// <summary>
             /// Result of the calculation
