@@ -65,8 +65,16 @@ namespace MyThreadPoolRealisation
                 }
                 else
                 {
-                    var task = waitingTasks.Take();   ///Blocks thread until task is availiable
-                    task?.Invoke();
+                    Action task;
+                    try
+                    {
+                        task = waitingTasks.Take(cancellationToken);
+                        task?.Invoke();
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        continue;
+                    }
                 }
             }
         }
