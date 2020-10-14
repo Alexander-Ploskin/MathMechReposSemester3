@@ -86,7 +86,7 @@ namespace MyThreadPoolRealisation
         /// Submits new function to thread pool
         /// </summary>
         /// <typeparam name="TResult">Type of the return value of the function</typeparam>
-        /// <param name="newFunc"><New function of the thread pool/param>
+        /// <param name="newFunc">New function of the thread pool</param>
         /// <returns>Task by the new function</returns>
         public IMyTask<TResult> Submit<TResult>(Func<TResult> newFunc)
         {
