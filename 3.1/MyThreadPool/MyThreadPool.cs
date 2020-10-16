@@ -155,11 +155,11 @@ namespace MyThreadPoolRealisation
             {
                 get
                 {
+                    waitResult.WaitOne();
                     if (aggregateException != null)
                     {
                         throw aggregateException;
                     }
-                    waitResult.WaitOne();
                     return result;
                 }
                 private set => result = value;
