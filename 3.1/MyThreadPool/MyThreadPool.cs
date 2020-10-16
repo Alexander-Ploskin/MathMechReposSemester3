@@ -89,7 +89,6 @@ namespace MyThreadPoolRealisation
             countdownEventForShutdown.Wait();
         }
 
-
         /// <summary>
         /// Submits new function to thread pool
         /// </summary>
@@ -128,7 +127,7 @@ namespace MyThreadPoolRealisation
             private readonly MyThreadPool threadPool;
             private AggregateException aggregateException = null;
             private readonly ConcurrentQueue<Action> transfersToThreadPool = new ConcurrentQueue<Action>();
-            private readonly CountdownEvent waitResult = new CountdownEvent(1);
+            private readonly ManualResetEvent waitResult = new ManualResetEvent(false);
 
             /// <summary>
             /// Base construtor of tasks
@@ -160,7 +159,7 @@ namespace MyThreadPoolRealisation
                     {
                         throw aggregateException;
                     }
-                    waitResult.Wait();
+                    waitResult.WaitOne();
                     return result;
                 }
                 private set => result = value;
@@ -187,7 +186,7 @@ namespace MyThreadPoolRealisation
                     }
                     func = null;
                     IsCompleted = true;
-                    waitResult.Signal();
+                    waitResult.Set();
                 }
             }
 
