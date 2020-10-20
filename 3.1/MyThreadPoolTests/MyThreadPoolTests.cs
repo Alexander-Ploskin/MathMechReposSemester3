@@ -212,5 +212,49 @@ namespace MyThreadPoolTests
             Assert.Throws<ApplicationException>(() => task.ContinueWith(x => true));
         }
 
+        [Test]
+        public void ShutDownWithEnqueuedTasks()
+        {
+            var waitShutdown = new CountdownEvent(1);
+            var task = threadPool.Submit(() =>
+            {
+                waitShutdown.Wait();
+                Thread.Sleep(100);
+                return true;
+            });
+            const int numberOfTasks = 10;
+            for (int i = 0; i < numberOfTasks; ++i)
+            {
+                task = task.ContinueWith(x => x && true);
+            }
+            waitShutdown.Signal();
+            threadPool.Shutdown();
+            Assert.AreEqual(true, task.Result);
+        }
+
+        [Test]
+        public void ManyContinueWithTest()
+        {
+            var waitForSubmitAllTasks = new CountdownEvent(1);
+            var task = threadPool.Submit(() =>
+            {
+                waitForSubmitAllTasks.Wait();
+                return true;
+            });
+            const int numberOfTasks = 30;
+            var tasks = new IMyTask<bool>[numberOfTasks];
+            tasks[0] = task.ContinueWith(x => x || true);
+            for (int i = 1; i < numberOfTasks; ++i)
+            {
+                tasks[i] = tasks[i - 1].ContinueWith(x => x || true);
+            }
+            waitForSubmitAllTasks.Signal();
+
+            for (int i = 0; i < numberOfTasks; ++i)
+            {
+                Assert.AreEqual(true, tasks[i].Result);
+            }
+        }
+
     }
 }
