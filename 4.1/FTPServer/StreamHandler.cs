@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -35,10 +36,10 @@ namespace FTPServer
                 var stream = client.GetStream();
                 var reader = new StreamReader(stream);
                 var writer = new StreamWriter(stream);
-
                 try
                 {
                     var request = await reader.ReadLineAsync();
+                    Console.WriteLine(request);
                     var response = FTPRequestsHandler.HadleRequest(request);
                     if (response.message != null)
                     {
