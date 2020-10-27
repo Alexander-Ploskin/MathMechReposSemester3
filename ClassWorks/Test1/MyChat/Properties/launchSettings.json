@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MyChat": {
+      "commandName": "Project",
+      "commandLineArgs": "arg1 49001 arg2 \"93.185.17.120\""
+    }
+  }
+}
