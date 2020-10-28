@@ -39,7 +39,6 @@ namespace FTPServer
                 try
                 {
                     var request = await reader.ReadLineAsync();
-                    Console.WriteLine(request);
                     var response = FTPRequestsHandler.HadleRequest(request);
                     if (response.message != null)
                     {
