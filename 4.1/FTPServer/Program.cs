@@ -10,7 +10,7 @@ namespace FTPServer
             const int port = 750;
             var iPAdress = IPAddress.Any;
 
-            await new StreamHandler(port, iPAdress).Run();
+            await new ConnectionProvider(port, iPAdress).Run();
         }
     }
 }

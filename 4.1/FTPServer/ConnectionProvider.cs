@@ -1,20 +1,30 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
 namespace FTPServer
 {
-    public class StreamHandler
+    /// <summary>
+    /// Provider of the connection with clients
+    /// </summary>
+    public class ConnectionProvider
     {
         TcpListener tcpListener;
 
-        public StreamHandler(int port, IPAddress iPAddress)
+        /// <summary>
+        /// Creates new connection provider with required port and ip
+        /// </summary>
+        /// <param name="port">Port to listening</param>
+        /// <param name="iPAddress">ip address</param>
+        public ConnectionProvider(int port, IPAddress iPAddress)
         {
             tcpListener = new TcpListener(iPAddress, port);
         }
 
+        /// <summary>
+        /// Eastablishes the connection with clients
+        /// </summary>
         public async Task Run()
         {
             tcpListener.Start();
@@ -26,6 +36,10 @@ namespace FTPServer
             }
         }
 
+        /// <summary>
+        /// Cathes all requests from the stream
+        /// </summary>
+        /// <param name="stream">Client stream</param>
         private async Task HandleRequests(Stream stream)
         {
             var reader = new StreamReader(stream);

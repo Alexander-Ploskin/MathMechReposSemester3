@@ -61,7 +61,7 @@ namespace FTPServer
             var output = $"{filePaths.Count + directoryPaths.Count}";
             foreach (var item in filePaths)
             {
-                output += $" {item} false ";
+                output += $" {item} false";
             }
             foreach (var item in directoryPaths)
             {
@@ -77,12 +77,7 @@ namespace FTPServer
         /// <param name="path">Relative path to the file</param>
         /// <returns>Size of the file and opened file stream</returns>
         /// <remarks>Caller should close the file after using</remarks>
-        private static (string, FileStream) Get(string path)
-        {
-            var fileStream = new FileStream(path, FileMode.Open);
-            var size = new FileInfo(path).Length + " ";
-            return (size, fileStream);
-        }
+        private static (string, FileStream) Get(string path) => (new FileInfo(path).Length.ToString(), new FileStream(path, FileMode.Open));
 
     }
 }
