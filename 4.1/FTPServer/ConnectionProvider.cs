@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -43,11 +44,12 @@ namespace FTPServer
         private async Task HandleRequests(Stream stream)
         {
             var reader = new StreamReader(stream);
+            await using var fileStream = File.Create("fsrgdsrgs");
 
             while (true)
             {
                 var request = await reader.ReadLineAsync();
-
+                Console.WriteLine(request);
                 var response = FTPRequestsHandler.HadleRequest(request);
                 var writer = new StreamWriter(stream) { AutoFlush = true };
 

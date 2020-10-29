@@ -45,6 +45,10 @@ namespace FTPServer
             {
                 return ($"{ErrorMessage} There are not directory, that you required", null);
             }
+            catch (FileNotFoundException)
+            {
+                return ($"{ErrorMessage} There are not file, that you required", null);
+            }
         }
 
         /// <summary>
