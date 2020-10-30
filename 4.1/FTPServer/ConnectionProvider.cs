@@ -44,23 +44,22 @@ namespace FTPServer
         private async Task HandleRequests(Stream stream)
         {
             var reader = new StreamReader(stream);
-            await using var fileStream = File.Create("fsrgdsrgs");
 
             while (true)
             {
                 var request = await reader.ReadLineAsync();
-                Console.WriteLine(request);
                 var response = FTPRequestsHandler.HadleRequest(request);
                 var writer = new StreamWriter(stream) { AutoFlush = true };
 
                 if (response.message != null)
                 {
                     await writer.WriteLineAsync(response.message);
+                    Console.WriteLine(response.message);
                 }
                 if (response.stream != null)
                 {
-                    await stream.CopyToAsync(writer.BaseStream);
-                    stream.Close();
+                    await response.stream.CopyToAsync(writer.BaseStream);
+                    response.stream.Close();
                 }
             }
         }
