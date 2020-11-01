@@ -54,7 +54,6 @@ namespace FTPServer
                 if (response.message != null)
                 {
                     await writer.WriteLineAsync(response.message);
-                    Console.WriteLine(response.message);
                 }
                 if (response.stream != null)
                 {

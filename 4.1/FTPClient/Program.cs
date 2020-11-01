@@ -13,7 +13,10 @@ namespace FTPClient
 
             try
             {
-                await new UserInterface(new FTPClient(port, hostname)).Run();
+                using (var tCPClient = new TcpClient(hostname, port))
+                {
+                    await new UserInterface(new FTPClient(tCPClient.GetStream())).Run();
+                }
             }
             catch (SocketException)
             {

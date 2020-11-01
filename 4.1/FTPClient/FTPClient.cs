@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Sockets;
 using System.Threading.Tasks;
 
 namespace FTPClient
@@ -9,28 +8,24 @@ namespace FTPClient
     /// <summary>
     /// Implementation of client that should to execute FTP requests
     /// </summary>
-    class FTPClient
+    public class FTPClient
     {
-        private readonly TcpClient client;
         private readonly StreamReader reader;
         private readonly StreamWriter writer;
 
         /// <summary>
-        /// Creates the new instance of FTPClient, that will work on the choosen port
+        /// Creates the new instance of FTPClient, that will work with the choosen stream
         /// </summary>
-        /// <param name="port">Port to connect</param>
-        /// <param name="hostname">Name of a host</param>
-        public FTPClient(int port, string hostname)
+        /// <param name="stream">Stream </param>
+        public FTPClient(Stream stream)
         {
-            client = new TcpClient(hostname, port);
-            var stream = client.GetStream();
             reader = new StreamReader(stream);
             writer = new StreamWriter(stream) { AutoFlush = true };
         }
 
-        const string InvalidResponseMessage = "Invalid server response";
-        const string ListCode = "1";
-        const string GetCode = "2";
+        public const string InvalidResponseMessage = "Invalid server response";
+        private const string ListCode = "1";
+        private const string GetCode = "2";
 
         /// <summary>
         /// Executes FTP request List
@@ -41,6 +36,11 @@ namespace FTPClient
             var request = $"{ListCode} {path}";
             await writer.WriteLineAsync(request);
             var response = await reader.ReadLineAsync();
+
+            if (response == null)
+            {
+                throw new ApplicationException(InvalidResponseMessage);
+            }
 
             var splittedResponse = response.Split(' ');
 
@@ -57,7 +57,7 @@ namespace FTPClient
             var names = new List<(string, bool)>();
             try
             {
-                for (int i = 1; i < splittedResponse.Length; i += 2)
+                for (int i = 1; i < size * 2; i += 2)
                 {
                     var name = splittedResponse[i];
                     if (!bool.TryParse(splittedResponse[i + 1], out var isDir))
@@ -105,7 +105,7 @@ namespace FTPClient
         private const int BufferSize = 10 * 1024;
 
         /// <summary>
-        /// Downloads a file from the server
+        /// Downloads a file from the stream
         /// </summary>
         private async Task<string> Download(long size, string pathToDownload, string name)
         {
