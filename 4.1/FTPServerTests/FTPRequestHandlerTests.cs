@@ -24,7 +24,7 @@ namespace FTPServerTests
         }
 
         [Test]
-        [TestCase("1 ./folder/folder")]
+        [TestCase("2 ./folder/document.txt")]
         [TestCase("1 ./folder/folder")]
         public void InvalidPathRequestsTest(string request)
         {
@@ -34,10 +34,10 @@ namespace FTPServerTests
         }
 
         [Test]
-        public void NotEmptyDirectoryTest()
+        public void ListNotEmptyDirectoryTest()
         {
             string path = $"{TestsDataDir}/NotEmptyFolder";
-            const string expectedResponse = "3 ..\\..\\..\\..\\ServerTestsData\\NotEmptyFolder\\File1.txt false  " +
+            const string expectedResponse = "3 ..\\..\\..\\..\\ServerTestsData\\NotEmptyFolder\\File1.txt false " +
                 "..\\..\\..\\..\\ServerTestsData\\NotEmptyFolder\\Dir1 true ..\\..\\..\\..\\ServerTestsData\\NotEmptyFolder\\Dir2 true";
             var response = FTPRequestsHandler.HadleRequest("1 " + path);
             Assert.AreEqual(expectedResponse, response.message);
@@ -45,12 +45,12 @@ namespace FTPServerTests
         }
 
         [Test]
-        public void GetTest()
+        public void GetNotEmptyFileTest()
         {
             string path = $"{TestsDataDir}/NotEmptyFolder/File1.txt";
             var response = FTPRequestsHandler.HadleRequest("2 " + path);
             const string expectedContent = "allright";
-            const string expectedSize = "8 ";
+            const string expectedSize = "8";
             Assert.AreEqual(expectedSize, response.message);
             using (var fs = response.stream)
             {
@@ -61,5 +61,21 @@ namespace FTPServerTests
             }
         }
 
+        [Test]
+        public void GetEmptyFileTest()
+        {
+            string path = $"{TestsDataDir}/NotEmptyFolder/Dir1/File1.txt";
+            var response = FTPRequestsHandler.HadleRequest("2 " + path);
+            const string expectedContent = "";
+            const string expectedSize = "0";
+            Assert.AreEqual(expectedSize, response.message);
+            using (var fs = response.stream)
+            {
+                var bytes = new byte[fs.Length];
+                fs.Read(bytes, 0, bytes.Length);
+                var content = Encoding.UTF8.GetString(bytes);
+                Assert.AreEqual(expectedContent, content);
+            }
+        }
     }
 }
