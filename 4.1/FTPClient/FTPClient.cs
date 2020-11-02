@@ -109,6 +109,11 @@ namespace FTPClient
         /// </summary>
         private async Task<string> Download(long size, string pathToDownload, string name)
         {
+            try
+            {
+                reader.BaseStream.Position -= size;
+            }
+            catch (NotSupportedException) { }
             if (!Directory.Exists(pathToDownload))
             {
                 Directory.CreateDirectory(pathToDownload);

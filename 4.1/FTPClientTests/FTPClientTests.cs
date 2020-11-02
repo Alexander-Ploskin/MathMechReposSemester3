@@ -7,8 +7,6 @@ namespace FTPClientTests
     using System.Threading.Tasks;
     using System;
     using System.Collections.Generic;
-    using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-    using System.Text;
 
     public class FTPClientTests
     {
@@ -157,22 +155,37 @@ namespace FTPClientTests
         [Test]
         public async Task GetNotEmptyFileTest()
         {
-            const string nameOfRecievedFile = "RecievedNotEmptyFile.txt";
             const string sentFilePath = TestDirectoryPath + "/NotEmptyFile.txt";
-            var size = new FileInfo(sentFilePath).Length.ToString();
-            await writer.WriteLineAsync(SimulationOfRequestToCorrectStreamPosition + size);
-            stream.Position = 0;
-            ///using var fileStream = new FileStream(sentFilePath, FileMode.Open);
-            ///await fileStream.CopyToAsync(writer.BaseStream);
-            ///writer.BaseStream.Position = 0;
-            await fTPClient.GetAsync(sentFilePath, TestDirectoryPath, nameOfRecievedFile);
+            const string recievedFileName = "RecievedNotEmptyFile.txt";
+            var fs = new FileStream(sentFilePath, FileMode.Open);
+            await writer.WriteLineAsync(SimulationOfRequestToCorrectStreamPosition + new FileInfo(sentFilePath).Length);
+            await fs.CopyToAsync(writer.BaseStream);
+            fs.Close();
+            writer.BaseStream.Position = 0;
+            await fTPClient.GetAsync("path", TestDirectoryPath, recievedFileName);
 
-            await fTPClient.GetAsync("path", TestDirectoryPath , nameOfRecievedFile);
-            Assert.IsTrue(File.Exists(TestDirectoryPath + nameOfRecievedFile));
-            Assert.AreEqual(size, new FileInfo(TestDirectoryPath + nameOfRecievedFile).Length);
-            using var fs = new FileStream(TestDirectoryPath + nameOfRecievedFile, FileMode.Open);
-            var contents = await new StreamReader(fs).ReadToEndAsync();
-            Assert.AreEqual("allright", contents);
+            const string recievedFilePath = TestDirectoryPath + "/" + recievedFileName;
+            Assert.IsTrue(File.Exists(recievedFilePath));
+            var recievedFileFs = new FileStream(recievedFilePath, FileMode.Open);
+            Assert.AreEqual("allright", new StreamReader(recievedFileFs).ReadToEnd());
+            recievedFileFs.Close();
+        }
+
+        [Test]
+        public async Task GetEmptyFileTest()
+        {
+            const string sentFilePath = TestDirectoryPath + "/EmptyFile.txt";
+            const string recievedFileName = "RecievedEmptyFile.txt";
+            var fs = new FileStream(sentFilePath, FileMode.Open);
+            await writer.WriteLineAsync(SimulationOfRequestToCorrectStreamPosition + new FileInfo(sentFilePath).Length);
+            await fs.CopyToAsync(writer.BaseStream);
+            fs.Close();
+            writer.BaseStream.Position = 0;
+            await fTPClient.GetAsync("path", TestDirectoryPath, recievedFileName);
+
+            const string recievedFilePath = TestDirectoryPath + "/" + recievedFileName;
+            Assert.IsTrue(File.Exists(recievedFilePath));
+            Assert.AreEqual(0, new FileInfo(recievedFilePath).Length);
         }
 
     }

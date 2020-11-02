@@ -34,16 +34,6 @@ namespace FTPServerTests
         }
 
         [Test]
-        public void EmptyDirectoryListTest()
-        {
-            string path = $"{TestsDataDir}/EmptyFolder";
-            const string expectedResponse = "0";
-            var response = FTPRequestsHandler.HadleRequest("1 " + path);
-            Assert.AreEqual(expectedResponse, response.message);
-            Assert.AreEqual(null, response.stream);
-        }
-
-        [Test]
         public void NotEmptyDirectoryTest()
         {
             string path = $"{TestsDataDir}/NotEmptyFolder";
