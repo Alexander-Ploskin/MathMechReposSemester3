@@ -2,20 +2,38 @@
 using System.Threading.Tasks;
 using System.Reflection;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace MyNUnit
 {
     public static class TestRunner
     {
-        public static async Task Run(string path)
+        private static ConcurrentQueue<Type> getClasses(string path)
         {
-            foreach (var file in Directory.GetFiles(path, "*.dll"))
+            var classes = new ConcurrentQueue<Type>();
+
+            foreach (var file in Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories))
             {
-                var name = new FileInfo(file).FullName;
-                Console.WriteLine(name);
-                var a = Assembly.Load(name);
-                Console.WriteLine(a.FullName);
+                var assembly = Assembly.LoadFrom(file);
+                foreach (var type in assembly.ExportedTypes)
+                {
+                    if (type.IsClass)
+                    {
+                        classes.Enqueue(type);
+                    }
+                }
             }
+
+            return classes;
+        }
+
+        public static async Task<IEnumerable<TestClassReport>> Run(string path)
+        {
+            var reports = new ConcurrentQueue<TestClassReport>();
+            var classes = getClasses(path);
+
+
         }
     }
 }

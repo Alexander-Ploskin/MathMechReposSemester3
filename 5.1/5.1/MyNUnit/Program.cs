@@ -8,8 +8,12 @@ namespace MyNUnit
     {
         static async Task Main(string[] args)
         {
-            var path = Console.ReadLine();
-            await TestRunner.Run(path);
+            if (args.Length != 1)
+            {
+                throw new ArgumentException("Invalid appliaction arguments");
+            }
+
+            Console.WriteLine(args[0]);
         }
     }
 }
