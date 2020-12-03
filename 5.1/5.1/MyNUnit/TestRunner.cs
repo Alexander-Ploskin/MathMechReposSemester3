@@ -15,6 +15,8 @@ namespace MyNUnit
     /// </summary>
     public static class TestRunner
     {
+        private static ConcurrentQueue<TestClassReport> report;
+
         /// <summary>
         /// Runs tests in all assemblies in the directory and in all subdirectories
         /// </summary>
@@ -24,25 +26,21 @@ namespace MyNUnit
         {
             var files = Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories);
             var classes = files.Select(Assembly.LoadFrom).Distinct().SelectMany(a => a.ExportedTypes).Where(t => t.IsClass);
-            var classesWithTests = classes.Where(c => c.GetMethods().Any(m => m.GetCustomAttributes().Any(a => a is TestAttribute)));
+            var testClasses = classes.Where(c => c.GetMethods().Any(m => m.GetCustomAttributes().Any(a => a is TestAttribute)));
+            report = new ConcurrentQueue<TestClassReport>();
 
-            var tests = new ConcurrentQueue<(Type, TestClassReport)>();
-            foreach (var classType in classesWithTests)
-            {
-                tests.Enqueue((classType, new TestClassReport(classType.Assembly.FullName.Split(' ')[0].TrimEnd(','), classType.Name)));
-            }
-            Parallel.ForEach(tests, RunTests);
-            return tests.Select(t => t.Item2);
+            Parallel.ForEach(testClasses, RunTests);
+            return report;
         }
 
         /// <summary>
         /// Finds all methods with the inputed attribute
         /// </summary>
-        /// <param name="classType">Name of class in assembly</param>
-        /// <param name="attributeType">Name of the attribute</param>
+        /// <param name="className">Name of class in assembly</param>
+        /// <param name="attributeName">Name of the attribute</param>
         /// <returns>Collection of methods</returns>
-        private static IEnumerable<MethodInfo> GetMethodsWithAttribute(Type classType, Type attributeType)
-            => classType.GetMethods().Where(m => m.GetCustomAttributes().Any(a => a.GetType() == attributeType));
+        private static IEnumerable<MethodInfo> GetMethodsWithAttribute(Type className, Type attributeName)
+            => className.GetMethods().Where(m => m.GetCustomAttributes().Any(a => a.GetType() == attributeName));
 
         /// <summary>
         /// Executes static methods with the attribute
@@ -54,25 +52,29 @@ namespace MyNUnit
             foreach (var method in methods)
             {
                 if (!method.IsStatic)
+                {
                     throw new InvalidOperationException($"{method} must be static");
+                }
 
                 method.Invoke(null, null);
             }
         }
 
         /// <summary>
-        /// Runs inputed tests and writes result into the report
+        /// Runs tests in the class and writes result into the report
         /// </summary>
-        private static void RunTests((Type classType, TestClassReport report) testInput)
+        private static void RunTests(Type className)
         {
-            ExecuteStaticMethods(testInput.classType, typeof(BeforeClassAttribute));
+            var classReport = new TestClassReport(className.Assembly.FullName.Split(' ')[0].TrimEnd(','), className.Name);
+            report.Enqueue(classReport);
+            ExecuteStaticMethods(className, typeof(BeforeClassAttribute));
 
-            var instance = Activator.CreateInstance(testInput.classType);
+            var instance = Activator.CreateInstance(className);
 
-            var beforeMethods = GetMethodsWithAttribute(testInput.classType, typeof(BeforeAttribute));
-            var afterMethods = GetMethodsWithAttribute(testInput.classType, typeof(AfterAttribute));
+            var beforeMethods = GetMethodsWithAttribute(className, typeof(BeforeAttribute));
+            var afterMethods = GetMethodsWithAttribute(className, typeof(AfterAttribute));
 
-            foreach (var testMethod in GetMethodsWithAttribute(testInput.classType, typeof(TestAttribute)))
+            foreach (var testMethod in GetMethodsWithAttribute(className, typeof(TestAttribute)))
             {
                 foreach (var method in beforeMethods)
                 {
@@ -83,7 +85,7 @@ namespace MyNUnit
 
                 if (attribute.Ignore != null)
                 {
-                    testInput.report.reports.Add(new SingleTestReport(testMethod.Name, attribute.Ignore));
+                    classReport.reports.Add(new SingleTestReport(testMethod.Name, attribute.Ignore));
                     continue;
                 }
 
@@ -102,7 +104,7 @@ namespace MyNUnit
                 }
                 finally
                 {
-                    testInput.report.reports.Add(new SingleTestReport(testMethod.Name, attribute.Expected, actual, stopwatch.Elapsed));
+                    classReport.reports.Add(new SingleTestReport(testMethod.Name, attribute.Expected, actual, stopwatch.Elapsed));
                 }
 
                 foreach (var method in afterMethods)
@@ -112,7 +114,7 @@ namespace MyNUnit
 
             }
 
-            ExecuteStaticMethods(testInput.classType, typeof(AfterClassAttribute));
+            ExecuteStaticMethods(className, typeof(AfterClassAttribute));
         }
 
     }
