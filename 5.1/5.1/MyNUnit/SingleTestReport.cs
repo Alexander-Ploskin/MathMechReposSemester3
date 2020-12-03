@@ -11,7 +11,6 @@ namespace MyNUnit
         /// Basic constructor for executed tests
         /// </summary>
         /// <param name="name">Test method name</param>
-        /// <param name="passed">True if test passed</param>
         /// <param name="expected">Type of expected exception, null if nothing is expected</param>
         /// <param name="actual">Thrown exception, null if nothing was thrown</param>
         /// <param name="time">Time of test execution</param>
@@ -23,18 +22,33 @@ namespace MyNUnit
             Time = time;
         }
 
+        /// <summary>
+        /// Constructor for ignored tests
+        /// </summary>
+        /// <param name="name">Name of the test</param>
+        /// <param name="ignoreCause">Cause of the ignore</param>
         public SingleTestReport(string name, string ignoreCause)
             : this(name, null, null, TimeSpan.Zero)
         {
             IngnoreCause = ignoreCause;
         }
 
+        /// <summary>
+        /// Name of the test method
+        /// </summary>
         public string Name { get; }
 
+        /// <summary>
+        /// True if test was passed else false
+        /// </summary>
         public bool Passed
         {
             get
             {
+                if (Ignored)
+                {
+                    return false;
+                }
                 if (Expected != null && Actual != null)
                 {
                     return Expected == Actual.GetType();
@@ -47,16 +61,34 @@ namespace MyNUnit
             }
         }
 
+        /// <summary>
+        /// Type of expected exception
+        /// </summary>
         public Type Expected { get; }
 
+        /// <summary>
+        /// Acually thrown exception
+        /// </summary>
         public Exception Actual { get; }
 
+        /// <summary>
+        /// Time of test execution
+        /// </summary>
         public TimeSpan Time { get; }
 
+        /// <summary>
+        /// Cause of ignore
+        /// </summary>
         public string IngnoreCause { get; }
 
+        /// <summary>
+        /// True if test wasn't executed
+        /// </summary>
         public bool Ignored { get => IngnoreCause != null; }
 
+        /// <summary>
+        /// Message of the test
+        /// </summary>
         public string Message
         {
             get
@@ -71,11 +103,11 @@ namespace MyNUnit
                 }
                 else if (Expected == null && Actual != null)
                 {
-                    return $"unexpected {Actual.GetType()}";
+                    return $"unexpected {Actual.GetType()} {Actual.Message}";
                 }
                 else if (Expected != null && Actual != null)
                 {
-                    return $"expected {Expected} but was {Actual.GetType()}";
+                    return $"expected {Expected} but was {Actual.GetType()} {Actual.Message}";
                 }
                 return "";
             }

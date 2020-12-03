@@ -3,8 +3,16 @@ using System.Threading.Tasks;
 
 namespace MyNUnit
 {
+    /// <summary>
+    /// Provides writing of the test report
+    /// </summary>
     public static class Reporter
     {
+        /// <summary>
+        /// Writes report of the tests in class
+        /// </summary>
+        /// <param name="classReport">Test class report</param>
+        /// <param name="writer">Writer of the report</param>
         public static async Task WriteReport(TestClassReport classReport, TextWriter writer)
         {
             await writer.WriteLineAsync($"Test report for {classReport.ClassName} from {classReport.AssemblyName} :");
@@ -20,7 +28,7 @@ namespace MyNUnit
                 {
                     ignored++;
                     shortResult = "=";
-                    result = "ignored";
+                    result = "ignored - ";
                 }
                 else if (report.Passed)
                 {
@@ -32,10 +40,10 @@ namespace MyNUnit
                 {
                     failed++;
                     shortResult = "-";
-                    result = "failed";
+                    result = "failed - ";
                 }
 
-                await writer.WriteLineAsync($"{shortResult} {report.Name} {result} - {report.Message}");
+                await writer.WriteLineAsync($"{shortResult} {report.Time} {report.Name} {result}{report.Message}");
             }
 
             await writer.WriteLineAsync($"Ignored: {ignored}");
