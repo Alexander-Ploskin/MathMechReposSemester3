@@ -4,7 +4,7 @@ using System.IO;
 
 namespace MyNUnit
 {
-    class TestClassReport
+    public class TestClassReport
     {
         public string AssemblyName { get; }
 
@@ -16,6 +16,7 @@ namespace MyNUnit
         {
             AssemblyName = assemblyName;
             ClassName = className;
+            reports = new List<SingleTestReport>();
         }
 
         public async Task ShowReport(TextWriter writer)
@@ -26,22 +27,23 @@ namespace MyNUnit
             var ignored = 0;
             foreach (var report in reports)
             {
-                if (report.IngnoreCause != "")
+                if (report.IngnoreCause != null)
                 {
                     ignored++;
-                    await writer.WriteLineAsync($"{report.Name} ingored because of {report.IngnoreCause}");
+                    await writer.WriteLineAsync($"= {report.Name} ingored - {report.Message}");
                     continue;
                 }
                 else if (report.Passed == false)
                 {
                     failed++;
-                    await writer.WriteLineAsync($"{report.Name} failed\n\t{report.FailureMessage}");
+                    await writer.WriteLineAsync($"- {report.Time} {report.Name} failed - {report.Message}");
                     continue;
                 }
                 passed++;
-                await writer.WriteLineAsync($"{report.Name} successfully passed");
+                await writer.WriteLineAsync($"+ {report.Time} {report.Name} passed");
             }
 
+            await writer.WriteLineAsync($"Ignored: {ignored}");
             await writer.WriteLineAsync($"Executed: {failed + passed}");
             await writer.WriteLineAsync($"Failed: {failed}");
             await writer.WriteLineAsync($"Passed: {passed}");

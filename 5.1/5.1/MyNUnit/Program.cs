@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace MyNUnit
 {
@@ -13,7 +13,21 @@ namespace MyNUnit
                 throw new ArgumentException("Invalid appliaction arguments");
             }
 
-            Console.WriteLine(args[0]);
+            var path = args[0];
+            try
+            {
+                var reports = TestRunner.RunTests(args[0]);
+
+                Console.WriteLine($"Execute tests in {path}");
+                foreach (var report in reports)
+                {
+                    await report.ShowReport(Console.Out);
+                }
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Console.WriteLine($"Counldn't find any directories in {path}");
+            }
         }
     }
 }

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MyNUnit
 {
-    class SingleTestReport
+    public class SingleTestReport
     {
         public SingleTestReport(string name, bool passed, Type expected, Exception actual, TimeSpan time)
         {
@@ -21,8 +19,6 @@ namespace MyNUnit
             IngnoreCause = ignoreCause;
         }
 
-        public SingleTestReport(string name, bool passed, TimeSpan time) : this(name, passed, null, null, time) { }
-
         public string Name { get; }
 
         public bool Passed { get; }
@@ -35,7 +31,35 @@ namespace MyNUnit
 
         public string IngnoreCause { get; }
 
-        public string FailureMessage { get => "so sad"; }
+        public bool Ignored { get => IngnoreCause != null; }
+
+        public string Message
+        {
+            get
+            {
+                if (Passed)
+                {
+                    return "";
+                }
+                if (Ignored)
+                {
+                    return IngnoreCause;
+                }
+                if (Expected != null && Actual == null)
+                {
+                    return $"expected {Expected} but was null";
+                }
+                else if (Expected == null && Actual != null)
+                {
+                    return $"unexpected {Actual.GetType()}";
+                }
+                else if (Expected != null && Actual != null)
+                {
+                    return $"expected {Expected} but was {Actual.GetType()}";
+                }
+                return "NUnit error";
+            }
+        }
 
     }
 }

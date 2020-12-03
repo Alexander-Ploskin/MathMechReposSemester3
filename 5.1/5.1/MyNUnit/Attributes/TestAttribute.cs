@@ -3,10 +3,16 @@
 namespace MyNUnit.Attributes
 {
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
-    class TestAttribute: Attribute
+    public class TestAttribute : Attribute
     {
-        public Type Expected { get; }
+        /// <summary>
+        /// Gets or sets the type of expected exception.
+        /// </summary>
+        public Type Expected { get; set; }
 
-        public string Ignore { get; }
+        /// <summary>
+        /// Reason for ignore the test.
+        /// </summary>
+        public string Ignore { get; set; }
     }
 }
