@@ -1,29 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MyNUnit;
+using MyNUnit.Attributes;
 
 namespace TestProject
 {
     public class BeforeAfterClassTests
     {
-        public void BeforeClass1()
-        {
+        private static bool[] checklist = new bool[4] { false, false, false, false };
 
+        [BeforeClass]
+        public static void BeforeClass1()
+        {
+            checklist[0] = true;
         }
 
-        public void BeforeClass2()
+        [BeforeClass]
+        public static void BeforeClass2()
         {
-
+            checklist[1] = true;
         }
 
-        public void AfterClass1()
+        [Test]
+        public void Check1()
         {
-
+            if (!checklist[0] || !checklist[1] || checklist[2] || checklist[3])
+            {
+                throw new TestFailedException();
+            }
         }
 
-        public void AfterClass2()
+        [Test]
+        public void Check2()
         {
+            if (!checklist[0] || !checklist[1] || checklist[2] || checklist[3])
+            {
+                throw new TestFailedException();
+            }
+        }
 
+        [AfterClass]
+        public static void AfterClass1()
+        {
+            checklist[2] = true;
+        }
+
+        [AfterClass]
+        public static void AfterClass2()
+        {
+            checklist[3] = true;
+            if (!checklist[0] || !checklist[1] || !checklist[2] || !checklist[3])
+            {
+                throw new TestFailedException();
+            }
         }
     }
 }

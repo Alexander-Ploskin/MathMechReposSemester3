@@ -3,9 +3,9 @@ using MyNUnit.Attributes;
 
 namespace TestProject
 {
-    class BeforeAfterTests
+    public class BeforeAfterTests
     {
-        private bool[] checklist = new bool[4]{ false, false, false, false };
+        private bool[] checklist = new bool[4] { false, false, false, false };
 
         [Before]
         public void Before1()
