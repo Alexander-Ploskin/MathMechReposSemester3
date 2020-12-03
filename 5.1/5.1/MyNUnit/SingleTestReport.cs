@@ -2,26 +2,50 @@
 
 namespace MyNUnit
 {
+    /// <summary>
+    /// Provides info about execution of one test method
+    /// </summary>
     public class SingleTestReport
     {
-        public SingleTestReport(string name, bool passed, Type expected, Exception actual, TimeSpan time)
+        /// <summary>
+        /// Basic constructor for executed tests
+        /// </summary>
+        /// <param name="name">Test method name</param>
+        /// <param name="passed">True if test passed</param>
+        /// <param name="expected">Type of expected exception, null if nothing is expected</param>
+        /// <param name="actual">Thrown exception, null if nothing was thrown</param>
+        /// <param name="time">Time of test execution</param>
+        public SingleTestReport(string name, Type expected, Exception actual, TimeSpan time)
         {
             Name = name;
-            Passed = passed;
             Expected = expected;
             Actual = actual;
             Time = time;
         }
 
         public SingleTestReport(string name, string ignoreCause)
-            : this(name, false, null, null, TimeSpan.Zero)
+            : this(name, null, null, TimeSpan.Zero)
         {
             IngnoreCause = ignoreCause;
         }
 
         public string Name { get; }
 
-        public bool Passed { get; }
+        public bool Passed
+        {
+            get
+            {
+                if (Expected != null && Actual != null)
+                {
+                    return Expected == Actual.GetType();
+                }
+                if (Expected == null && Actual == null)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
 
         public Type Expected { get; }
 
@@ -37,10 +61,6 @@ namespace MyNUnit
         {
             get
             {
-                if (Passed)
-                {
-                    return "";
-                }
                 if (Ignored)
                 {
                     return IngnoreCause;
@@ -57,7 +77,7 @@ namespace MyNUnit
                 {
                     return $"expected {Expected} but was {Actual.GetType()}";
                 }
-                return "NUnit error";
+                return "";
             }
         }
 

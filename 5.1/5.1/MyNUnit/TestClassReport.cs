@@ -1,52 +1,35 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.IO;
 
 namespace MyNUnit
 {
+    /// <summary>
+    /// Provides info about executed test class
+    /// </summary>
     public class TestClassReport
     {
+        /// <summary>
+        /// Name of assembly that contains class
+        /// </summary>
         public string AssemblyName { get; }
 
+        /// <summary>
+        /// Name of the class
+        /// </summary>
         public string ClassName { get; }
 
+        /// <summary>
+        /// Report for every test, that belongs to the class
+        /// </summary>
         public readonly List<SingleTestReport> reports;
 
+        /// <summary>
+        /// Basic constructor
+        /// </summary>
         public TestClassReport(string assemblyName, string className)
         {
             AssemblyName = assemblyName;
             ClassName = className;
             reports = new List<SingleTestReport>();
-        }
-
-        public async Task ShowReport(TextWriter writer)
-        {
-            await writer.WriteLineAsync($"Test report for {ClassName} from {AssemblyName} :");
-            var failed = 0;
-            var passed = 0;
-            var ignored = 0;
-            foreach (var report in reports)
-            {
-                if (report.IngnoreCause != null)
-                {
-                    ignored++;
-                    await writer.WriteLineAsync($"= {report.Name} ingored - {report.Message}");
-                    continue;
-                }
-                else if (report.Passed == false)
-                {
-                    failed++;
-                    await writer.WriteLineAsync($"- {report.Time} {report.Name} failed - {report.Message}");
-                    continue;
-                }
-                passed++;
-                await writer.WriteLineAsync($"+ {report.Time} {report.Name} passed");
-            }
-
-            await writer.WriteLineAsync($"Ignored: {ignored}");
-            await writer.WriteLineAsync($"Executed: {failed + passed}");
-            await writer.WriteLineAsync($"Failed: {failed}");
-            await writer.WriteLineAsync($"Passed: {passed}");
         }
 
     }

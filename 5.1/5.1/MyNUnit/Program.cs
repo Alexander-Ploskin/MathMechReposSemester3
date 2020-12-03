@@ -21,7 +21,7 @@ namespace MyNUnit
                 Console.WriteLine($"Execute tests in {path}");
                 foreach (var report in reports)
                 {
-                    await report.ShowReport(Console.Out);
+                    await Reporter.WriteReport(report, Console.Out);
                 }
             }
             catch (DirectoryNotFoundException)

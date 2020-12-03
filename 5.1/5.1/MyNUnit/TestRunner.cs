@@ -87,7 +87,6 @@ namespace MyNUnit
                     continue;
                 }
 
-                var passed = false;
                 Exception actual = null;
                 var stopwatch = new Stopwatch();
 
@@ -96,16 +95,14 @@ namespace MyNUnit
                     stopwatch.Start();
                     testMethod.Invoke(instance, null);
                     stopwatch.Stop();
-                    passed = attribute.Expected == null;
                 }
                 catch (TargetInvocationException e)
                 {
-                    passed = e.InnerException.GetType() == attribute.Expected;
                     actual = e.InnerException;
                 }
                 finally
                 {
-                    testInput.report.reports.Add(new SingleTestReport(testMethod.Name, passed, attribute.Expected, actual, stopwatch.Elapsed));
+                    testInput.report.reports.Add(new SingleTestReport(testMethod.Name, attribute.Expected, actual, stopwatch.Elapsed));
                 }
 
                 foreach (var method in afterMethods)
@@ -113,8 +110,9 @@ namespace MyNUnit
                     method.Invoke(instance, null);
                 }
 
-                ExecuteStaticMethods(testInput.classType, typeof(AfterClassAttribute));
             }
+
+            ExecuteStaticMethods(testInput.classType, typeof(AfterClassAttribute));
         }
 
     }
