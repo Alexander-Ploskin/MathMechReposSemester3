@@ -1,4 +1,4 @@
-﻿using System;
+﻿using MyNUnit;
 using MyNUnit.Attributes;
 
 namespace TestProject
@@ -32,14 +32,20 @@ namespace TestProject
         }
 
         [Test]
-        public void Check()
+        public void CheckBefore()
         {
-            foreach (var item in checklist)
+            if (!checklist[0] || !checklist[1] || checklist[2] || checklist[3])
             {
-                if (!item)
-                {
-                    throw new ApplicationException();
-                }
+                throw new TestFailedException();
+            }
+        }
+
+        [Test]
+        public void CheckAfter()
+        {
+            if (!checklist[2] || !checklist[3])
+            {
+                throw new TestFailedException();
             }
         }
 

@@ -79,7 +79,7 @@ namespace MyNUnit
         /// <summary>
         /// Cause of ignore
         /// </summary>
-        public string IngnoreCause { get; }
+        private string IngnoreCause { get; }
 
         /// <summary>
         /// True if test wasn't executed
@@ -103,11 +103,11 @@ namespace MyNUnit
                 }
                 else if (Expected == null && Actual != null)
                 {
-                    return $"unexpected {Actual.GetType()} {Actual.Message}";
+                    return $"unexpected {Actual.GetType()}";
                 }
                 else if (Expected != null && Actual != null)
                 {
-                    return $"expected {Expected} but was {Actual.GetType()} {Actual.Message}";
+                    return $"expected {Expected} but was {Actual.GetType()}";
                 }
                 return "";
             }

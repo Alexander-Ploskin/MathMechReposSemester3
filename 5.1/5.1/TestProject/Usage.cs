@@ -1,9 +1,10 @@
 ﻿using System;
 using MyNUnit.Attributes;
+using MyNUnit;
 
 namespace TestProject
 {
-    public class UsageTests
+    public class Usage
     {
         [Test(Ignore = "allright")]
         public void IgnoredTest()
@@ -19,7 +20,7 @@ namespace TestProject
         [Test]
         public void FailedTest()
         {
-            throw new ApplicationException();
+            throw new TestFailedException();
         }
 
         [Test(Expected = typeof(ArgumentException))]
@@ -38,5 +39,6 @@ namespace TestProject
         {
             throw new ApplicationException();
         }
+
     }
 }
