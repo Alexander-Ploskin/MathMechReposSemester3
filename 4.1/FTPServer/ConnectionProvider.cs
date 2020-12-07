@@ -11,7 +11,7 @@ namespace FTPServer
     /// </summary>
     public class ConnectionProvider
     {
-        TcpListener tcpListener;
+        private TcpListener tcpListener;
 
         /// <summary>
         /// Creates new connection provider with required port and ip
@@ -33,7 +33,7 @@ namespace FTPServer
             while (true)
             {
                 var client = await tcpListener.AcceptTcpClientAsync();
-                Task.Run(async () => await HandleRequests(client.GetStream()));
+                Task.Run(async () => await HandleRequests(client));
             }
         }
 
@@ -41,24 +41,28 @@ namespace FTPServer
         /// Cathes all requests from the stream
         /// </summary>
         /// <param name="stream">Client stream</param>
-        private async Task HandleRequests(Stream stream)
+        private async Task HandleRequests(TcpClient client)
         {
-            var reader = new StreamReader(stream);
-
-            while (true)
+            using (client)
             {
-                var request = await reader.ReadLineAsync();
-                var response = FTPRequestsHandler.HadleRequest(request);
-                var writer = new StreamWriter(stream) { AutoFlush = true };
+                using var stream = client.GetStream();
+                using var reader = new StreamReader(stream);
 
-                if (response.message != null)
+                while (true)
                 {
-                    await writer.WriteLineAsync(response.message);
-                }
-                if (response.stream != null)
-                {
-                    await response.stream.CopyToAsync(writer.BaseStream);
-                    response.stream.Close();
+                    var request = await reader.ReadLineAsync();
+                    var response = FTPRequestsHandler.HadleRequest(request);
+                    using var writer = new StreamWriter(stream) { AutoFlush = true };
+
+                    if (response.message != null)
+                    {
+                        await writer.WriteLineAsync(response.message);
+                    }
+                    if (response.stream != null)
+                    {
+                        await response.stream.CopyToAsync(writer.BaseStream);
+                        response.stream.Close();
+                    }
                 }
             }
         }

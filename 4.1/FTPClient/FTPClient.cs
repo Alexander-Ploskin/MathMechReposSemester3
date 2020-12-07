@@ -8,7 +8,7 @@ namespace FTPClient
     /// <summary>
     /// Implementation of client that should to execute FTP requests
     /// </summary>
-    public class FTPClient
+    public class FTPClient : IDisposable
     {
         private readonly StreamReader reader;
         private readonly StreamWriter writer;
@@ -31,7 +31,7 @@ namespace FTPClient
         /// Executes FTP request List
         /// </summary>
         /// <param name="path">Path of a directory on the server</param>
-        public async Task<(int size, IEnumerable<(string, bool)> names)> ListAsync(string path)
+        public async Task<ICollection<(string, bool)>> ListAsync(string path)
         {
             var request = $"{ListCode} {path}";
             await writer.WriteLineAsync(request);
@@ -43,6 +43,11 @@ namespace FTPClient
             }
 
             var splittedResponse = response.Split(' ');
+
+            if (splittedResponse.Length == 0)
+            {
+                throw new ApplicationException(InvalidResponseMessage);
+            }
 
             if (!int.TryParse(splittedResponse[0], out var size))
             {
@@ -67,7 +72,12 @@ namespace FTPClient
                     names.Add((name, isDir));
                 }
 
-                return (size, names);
+                if (size != names.Count)
+                {
+                    throw new ApplicationException(InvalidResponseMessage);
+                }
+
+                return names;
             }
             catch (IndexOutOfRangeException)
             {
@@ -133,5 +143,10 @@ namespace FTPClient
             return fileName;
         }
 
+        public void Dispose()
+        {
+            writer.Dispose();
+            reader.Dispose();
+        }
     }
 }

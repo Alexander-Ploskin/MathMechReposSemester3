@@ -20,7 +20,7 @@ namespace FTPServerTests
         {
             var response = FTPRequestsHandler.HadleRequest(request);
             Assert.AreEqual(FTPRequestsHandler.ErrorMessage, response.message.Substring(0, 2));
-            Assert.AreEqual(null, response.stream);
+            Assert.IsNull(response.stream);
         }
 
         [Test]

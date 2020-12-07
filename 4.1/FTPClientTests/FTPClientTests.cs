@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System.Threading;
 
 namespace FTPClientTests
 {
@@ -30,11 +31,7 @@ namespace FTPClientTests
         [Test]
         public async Task CorrectListRequestsTest()
         {
-            try
-            {
-                await fTPClient.ListAsync("path");
-            }
-            catch (Exception) { }
+            Assert.Throws<ApplicationException>(async () => await fTPClient.ListAsync("path"));
             stream.Position = 0;
             var request = await reader.ReadLineAsync();
             Assert.AreEqual("1 path", request);
@@ -43,11 +40,7 @@ namespace FTPClientTests
         [Test]
         public async Task CorrectGetRequestsTest()
         {
-            try
-            {
-                await fTPClient.GetAsync("path", "pathtodownload", "name");
-            }
-            catch (Exception) { }
+            Assert.ThrowsAsync<ApplicationException>(async () => await fTPClient.GetAsync("path", "pathtodownload", "name"));
             stream.Position = 0;
             var request = await reader.ReadLineAsync();
             Assert.AreEqual("2 path", request);
@@ -134,7 +127,7 @@ namespace FTPClientTests
         public async Task EmptyDirResponseToListTest()
         {
             const string response = "0";
-            var expectedResult = (0, new List<(string, bool)>());
+            var expectedResult = new List<(string, bool)>();
             await writer.WriteLineAsync(SimulationOfRequestToCorrectStreamPosition + response);
             stream.Position = 0;
             var result = await fTPClient.ListAsync("path");
@@ -145,7 +138,7 @@ namespace FTPClientTests
         public async Task NotEmptyDirResponseToListTest()
         {
             const string response = "2 path1 true path2 false";
-            var expectedResult = (2, new List<(string, bool)>() { ("path1", true), ("path2", false)});
+            var expectedResult = new List<(string, bool)>() { ("path1", true), ("path2", false)};
             await writer.WriteLineAsync(SimulationOfRequestToCorrectStreamPosition + response);
             stream.Position = 0;
             var result = await fTPClient.ListAsync("path");

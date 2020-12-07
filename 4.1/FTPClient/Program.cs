@@ -8,15 +8,18 @@ namespace FTPClient
     {
         static async Task Main(string[] args)
         {
-            const int port = 750;
-            const string hostname = "localhost";
+            int port = 0;
+            if (args.Length != 2 || !!int.TryParse(args[0], out port))
+            {
+                throw new ArgumentException("Invalid arguments");
+            }
+
+            var hostname = args[1];
 
             try
             {
-                using (var tCPClient = new TcpClient(hostname, port))
-                {
-                    await new UserInterface(new FTPClient(tCPClient.GetStream())).Run();
-                }
+                using var tcpClient = new TcpClient(hostname, port);
+                await new UserInterface(new FTPClient(tcpClient.GetStream())).Run();
             }
             catch (SocketException)
             {
