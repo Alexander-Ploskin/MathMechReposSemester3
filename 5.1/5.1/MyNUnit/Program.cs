@@ -10,7 +10,7 @@ namespace MyNUnit
         {
             if (args.Length != 1)
             {
-                throw new ArgumentException("Invalid appliaction arguments");
+                throw new ArgumentException("Invalid appliaction arguments. You should enter only a path of the test directory");
             }
 
             var path = args[0];
