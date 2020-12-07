@@ -16,6 +16,7 @@ namespace MyNUnit
     public static class TestRunner
     {
         private static ConcurrentQueue<TestClassReport> report;
+        private static ConcurrentQueue<Assembly> assemblies;
 
         /// <summary>
         /// Runs tests in all assemblies in the directory and in all subdirectories
@@ -25,12 +26,19 @@ namespace MyNUnit
         public static IEnumerable<TestClassReport> RunTests(string path)
         {
             var files = Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories);
-            var classes = files.Select(Assembly.LoadFrom).Distinct().SelectMany(a => a.ExportedTypes).Where(t => t.IsClass);
+            assemblies = new ConcurrentQueue<Assembly>();
+            Parallel.ForEach(files, LoadAssemblies);
+            var classes = assemblies.Distinct().SelectMany(a => a.ExportedTypes).Where(t => t.IsClass);
             var testClasses = classes.Where(c => c.GetMethods().Any(m => m.GetCustomAttributes().Any(a => a is TestAttribute)));
             report = new ConcurrentQueue<TestClassReport>();
 
             Parallel.ForEach(testClasses, RunTests);
             return report;
+        }
+
+        private static void LoadAssemblies(string path)
+        {
+            assemblies.Enqueue(Assembly.LoadFrom(path));
         }
 
         /// <summary>
