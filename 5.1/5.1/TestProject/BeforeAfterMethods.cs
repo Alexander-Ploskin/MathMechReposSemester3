@@ -1,6 +1,5 @@
-﻿using MyNUnit.Attributes;
-using MyNUnit;
-using System.Threading;
+﻿using MyNUnitAttributes;
+using System;
 
 namespace TestProject
 {
@@ -26,7 +25,7 @@ namespace TestProject
         {
             if (!checklist[0] || !checklist[1] || checklist[2] || checklist[3])
             {
-                throw new TestFailedException();
+                throw new ApplicationException();
             }
         }
 
@@ -47,7 +46,7 @@ namespace TestProject
         {
             if (!checklist[0] || !checklist[1] || !checklist[2] || !checklist[3])
             {
-                throw new TestFailedException();
+                throw new ApplicationException();
             }
         }
     }

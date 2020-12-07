@@ -1,7 +1,7 @@
 using NUnit.Framework;
-using MyNUnit;
 using System.Linq;
 using System;
+using MyNUnit;
 
 namespace MyNUnitTests
 {
@@ -52,8 +52,8 @@ namespace MyNUnitTests
             var report = basicUsageReports.reports.Where(r => r.Name is "FailedTest").First();
             Assert.IsFalse(report.Passed);
             Assert.IsNull(report.Expected);
-            Assert.AreEqual(typeof(TestFailedException), report.Actual.GetType());
-            Assert.AreEqual("unexpected MyNUnit.TestFailedException", report.Message);
+            Assert.AreEqual(typeof(ApplicationException), report.Actual.GetType());
+            Assert.AreEqual("unexpected System.ApplicationException", report.Message);
             Assert.IsFalse(report.Ignored);
         }
 

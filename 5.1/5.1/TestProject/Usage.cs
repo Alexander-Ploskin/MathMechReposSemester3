@@ -1,6 +1,5 @@
 ﻿using System;
-using MyNUnit.Attributes;
-using MyNUnit;
+using MyNUnitAttributes;
 
 namespace TestProject
 {
@@ -20,7 +19,7 @@ namespace TestProject
         [Test]
         public void FailedTest()
         {
-            throw new TestFailedException();
+            throw new ApplicationException();
         }
 
         [Test(Expected = typeof(ArgumentException))]
