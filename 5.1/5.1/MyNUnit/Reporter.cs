@@ -50,7 +50,7 @@ namespace MyNUnit
             await writer.WriteLineAsync($"Executed: {failed + passed}");
             await writer.WriteLineAsync($"Failed: {failed}");
             await writer.WriteLineAsync($"Passed: {passed}");
-
         }
+
     }
 }

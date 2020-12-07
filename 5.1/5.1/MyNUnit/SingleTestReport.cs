@@ -53,11 +53,7 @@ namespace MyNUnit
                 {
                     return Expected == Actual.GetType();
                 }
-                if (Expected == null && Actual == null)
-                {
-                    return true;
-                }
-                return false;
+                return Expected == null && Actual == null;
             }
         }
 
