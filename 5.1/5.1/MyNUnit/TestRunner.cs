@@ -75,54 +75,79 @@ namespace MyNUnit
         {
             var classReport = new TestClassReport(className.Assembly.FullName.Split(' ')[0].TrimEnd(','), className.Name);
             report.Enqueue(classReport);
-            ExecuteStaticMethods(className, typeof(BeforeClassAttribute));
 
-            var instance = Activator.CreateInstance(className);
-
+            var tests = new ConcurrentQueue<TestInfo>();
             var beforeMethods = GetMethodsWithAttribute(className, typeof(BeforeAttribute));
             var afterMethods = GetMethodsWithAttribute(className, typeof(AfterAttribute));
-
-            foreach (var testMethod in GetMethodsWithAttribute(className, typeof(TestAttribute)))
+            foreach (var method in GetMethodsWithAttribute(className, typeof(TestAttribute)))
             {
-                foreach (var method in beforeMethods)
-                {
-                    method.Invoke(instance, null);
-                }
+                tests.Enqueue(new TestInfo(className, method, beforeMethods, afterMethods, classReport));
+            }
+            Parallel.ForEach(tests, RunTest);
+        }
 
-                var attribute = (TestAttribute)testMethod.GetCustomAttribute(typeof(TestAttribute));
+        private class TestInfo
+        {
+            public TestInfo(Type className, MethodInfo method, IEnumerable<MethodInfo> beforeMethods,
+                IEnumerable<MethodInfo> afterMethods, TestClassReport classReport)
+            {
+                ClassName = className;
+                Method = method;
+                BeforeMethods = beforeMethods;
+                AfterMethods = afterMethods;
+                ClassReport = classReport;
+            }
+            public Type ClassName { get; }
+            public MethodInfo Method { get; }
+            public IEnumerable<MethodInfo> BeforeMethods { get; }
+            public IEnumerable<MethodInfo> AfterMethods { get; }
 
-                if (attribute.Ignore != null)
-                {
-                    classReport.reports.Add(new SingleTestReport(testMethod.Name, attribute.Ignore));
-                    continue;
-                }
+            public TestClassReport ClassReport { get; }
+        }
 
-                Exception actual = null;
-                var stopwatch = new Stopwatch();
+        private static void RunTest(TestInfo info)
+        {
+            var instance = Activator.CreateInstance(info.ClassName);
 
-                try
-                {
-                    stopwatch.Start();
-                    testMethod.Invoke(instance, null);
-                    stopwatch.Stop();
-                }
-                catch (TargetInvocationException e)
-                {
-                    actual = e.InnerException;
-                }
-                finally
-                {
-                    classReport.reports.Add(new SingleTestReport(testMethod.Name, attribute.Expected, actual, stopwatch.Elapsed));
-                }
+            var attribute = (TestAttribute)info.Method.GetCustomAttribute(typeof(TestAttribute));
 
-                foreach (var method in afterMethods)
-                {
-                    method.Invoke(instance, null);
-                }
-
+            if (attribute.Ignore != null)
+            {
+                info.ClassReport.reports.Add(new SingleTestReport(info.Method.Name, attribute.Ignore));
+                return;
             }
 
-            ExecuteStaticMethods(className, typeof(AfterClassAttribute));
+            ExecuteStaticMethods(info.ClassName, typeof(BeforeClassAttribute));
+            foreach (var method in info.BeforeMethods)
+            {
+                method.Invoke(instance, null);
+            }
+
+            Exception actual = null;
+            var stopwatch = new Stopwatch();
+
+            try
+            {
+                stopwatch.Start();
+                info.Method.Invoke(instance, null);
+                stopwatch.Stop();
+            }
+            catch (TargetInvocationException e)
+            {
+                stopwatch.Stop();
+                actual = e.InnerException;
+            }
+            finally
+            {
+                info.ClassReport.reports.Add(new SingleTestReport(info.Method.Name, attribute.Expected, actual, stopwatch.Elapsed));
+            }
+
+            foreach (var method in info.AfterMethods)
+            {
+                method.Invoke(instance, null);
+            }
+
+            ExecuteStaticMethods(info.ClassName, typeof(AfterClassAttribute));
         }
 
     }

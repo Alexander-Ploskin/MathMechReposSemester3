@@ -1,35 +1,28 @@
 ﻿using MyNUnit;
 using MyNUnit.Attributes;
+using System;
 
 namespace TestProject
 {
-    public class BeforeAfterClassTests
+    public class StaticMethods
     {
         private static bool[] checklist = new bool[4] { false, false, false, false };
 
+
         [BeforeClass]
-        public static void BeforeClass1()
+        public static void Before1()
         {
             checklist[0] = true;
         }
 
         [BeforeClass]
-        public static void BeforeClass2()
+        public static void Before2()
         {
             checklist[1] = true;
         }
 
         [Test]
-        public void Check1()
-        {
-            if (!checklist[0] || !checklist[1] || checklist[2] || checklist[3])
-            {
-                throw new TestFailedException();
-            }
-        }
-
-        [Test]
-        public void Check2()
+        public void Test()
         {
             if (!checklist[0] || !checklist[1] || checklist[2] || checklist[3])
             {
@@ -38,15 +31,20 @@ namespace TestProject
         }
 
         [AfterClass]
-        public static void AfterClass1()
+        public static void After1()
         {
             checklist[2] = true;
         }
 
         [AfterClass]
-        public static void AfterClass2()
+        public static void After2()
         {
             checklist[3] = true;
+        }
+
+        [AfterClass]
+        public static void After3()
+        {
             if (!checklist[0] || !checklist[1] || !checklist[2] || !checklist[3])
             {
                 throw new TestFailedException();

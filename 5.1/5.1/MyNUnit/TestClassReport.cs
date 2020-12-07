@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 
 namespace MyNUnit
 {
@@ -20,7 +20,7 @@ namespace MyNUnit
         /// <summary>
         /// Report for every test, that belongs to the class
         /// </summary>
-        public readonly List<SingleTestReport> reports;
+        public readonly ConcurrentBag<SingleTestReport> reports;
 
         /// <summary>
         /// Basic constructor
@@ -29,7 +29,7 @@ namespace MyNUnit
         {
             AssemblyName = assemblyName;
             ClassName = className;
-            reports = new List<SingleTestReport>();
+            reports = new ConcurrentBag<SingleTestReport>();
         }
 
     }

@@ -10,21 +10,24 @@ namespace MyNUnitTests
         [SetUp]
         public void SetUp()
         {
-            reports = TestRunner.RunTests("../../../../TestProject").Where(r => r.ClassName is "Usage").First();
+            var reports = TestRunner.RunTests("../../../../TestProject");
+            basicUsageReports = reports.Where(r => r.ClassName == "Usage").FirstOrDefault();
+            beforeAfterMethodsReports = reports.Where(r => r.ClassName == "BeforeAfterMethods").FirstOrDefault();
         }
 
-        private TestClassReport reports;
+        private TestClassReport basicUsageReports;
+        private TestClassReport beforeAfterMethodsReports;
 
         [Test]
         public void MainInfoTest()
         {
-            Assert.AreEqual("TestProject", reports.AssemblyName);
+            Assert.AreEqual("TestProject", basicUsageReports.AssemblyName);
         }
 
         [Test]
         public void IgnoredMethodTest()
         {
-            var report = reports.reports.Where(r => r.Name is "IgnoredTest").First();
+            var report = basicUsageReports.reports.Where(r => r.Name is "IgnoredTest").First();
             Assert.IsFalse(report.Passed);
             Assert.IsNull(report.Expected);
             Assert.IsNull(report.Actual);
@@ -35,7 +38,7 @@ namespace MyNUnitTests
         [Test]
         public void PassedMethodTest()
         {
-            var report = reports.reports.Where(r => r.Name is "PassedTest").First();
+            var report = basicUsageReports.reports.Where(r => r.Name is "PassedTest").First();
             Assert.IsTrue(report.Passed);
             Assert.IsNull(report.Expected);
             Assert.IsNull(report.Actual);
@@ -46,7 +49,7 @@ namespace MyNUnitTests
         [Test]
         public void FailedMethodTest()
         {
-            var report = reports.reports.Where(r => r.Name is "FailedTest").First();
+            var report = basicUsageReports.reports.Where(r => r.Name is "FailedTest").First();
             Assert.IsFalse(report.Passed);
             Assert.IsNull(report.Expected);
             Assert.AreEqual(typeof(TestFailedException), report.Actual.GetType());
@@ -57,7 +60,7 @@ namespace MyNUnitTests
         [Test]
         public void PassedTestWithExpectedExceptionTest()
         {
-            var report = reports.reports.Where(r => r.Name is "PassedTestWithExpectedException").First();
+            var report = basicUsageReports.reports.Where(r => r.Name is "PassedTestWithExpectedException").First();
             Assert.IsTrue(report.Passed);
             Assert.AreEqual(typeof(ArgumentException), report.Expected);
             Assert.AreEqual(typeof(ArgumentException), report.Actual.GetType());
@@ -68,7 +71,7 @@ namespace MyNUnitTests
         [Test]
         public void FailedTestWithExpectedExceptionTest()
         {
-            var report = reports.reports.Where(r => r.Name is "FailedTestWithExpectedException").First();
+            var report = basicUsageReports.reports.Where(r => r.Name is "FailedTestWithExpectedException").First();
             Assert.IsFalse(report.Passed);
             Assert.AreEqual(typeof(ArgumentException), report.Expected);
             Assert.IsNull(report.Actual);
@@ -79,7 +82,7 @@ namespace MyNUnitTests
         [Test]
         public void FailedTestWithUnexpectedExceptionTest()
         {
-            var report = reports.reports.Where(r => r.Name is "FailedTestWithUnexpectedException").First();
+            var report = basicUsageReports.reports.Where(r => r.Name is "FailedTestWithUnexpectedException").First();
             Assert.IsFalse(report.Passed);
             Assert.AreEqual(typeof(ArgumentException), report.Expected);
             Assert.AreEqual(typeof(ApplicationException), report.Actual.GetType());
@@ -87,5 +90,10 @@ namespace MyNUnitTests
             Assert.IsFalse(report.Ignored);
         }
 
+        [Test]
+        public void BeforeAfterMethodsTest()
+        {
+            Assert.IsTrue(beforeAfterMethodsReports.reports.Any(r => r.Passed));
+        }
     }
 }

@@ -1,11 +1,13 @@
-﻿using MyNUnit;
-using MyNUnit.Attributes;
+﻿using MyNUnit.Attributes;
+using MyNUnit;
+using System.Threading;
 
 namespace TestProject
 {
-    public class BeforeAfterTests
+    public class BeforeAfterMethods
     {
         private bool[] checklist = new bool[4] { false, false, false, false };
+
 
         [Before]
         public void Before1()
@@ -17,6 +19,15 @@ namespace TestProject
         public void Before2()
         {
             checklist[1] = true;
+        }
+
+        [Test]
+        public void Test()
+        {
+            if (!checklist[0] || !checklist[1] || checklist[2] || checklist[3])
+            {
+                throw new TestFailedException();
+            }
         }
 
         [After]
@@ -31,23 +42,13 @@ namespace TestProject
             checklist[3] = true;
         }
 
-        [Test]
-        public void CheckBefore()
+        [After]
+        public void After3()
         {
-            if (!checklist[0] || !checklist[1] || checklist[2] || checklist[3])
+            if (!checklist[0] || !checklist[1] || !checklist[2] || !checklist[3])
             {
                 throw new TestFailedException();
             }
         }
-
-        [Test]
-        public void CheckAfter()
-        {
-            if (!checklist[2] || !checklist[3])
-            {
-                throw new TestFailedException();
-            }
-        }
-
     }
 }
