@@ -68,6 +68,24 @@ namespace MyNUnit
             }
         }
 
+        private static (bool isValid, string reason) CheckValidity(MethodInfo method)
+        {
+            if (method.IsStatic)
+            {
+                return (false, "shouldn't be static");
+            }
+            if (method.ReturnType != typeof(void))
+            {
+                return (false, "should be void");
+            }
+            if (method.GetParameters().Length != 0)
+            {
+                return (false, "shouldn't has parameters");
+            }
+
+            return (true, null);
+        }
+
         /// <summary>
         /// Runs tests in the class and writes result into the report
         /// </summary>
@@ -81,6 +99,13 @@ namespace MyNUnit
             var afterMethods = GetMethodsWithAttribute(className, typeof(AfterAttribute));
             foreach (var method in GetMethodsWithAttribute(className, typeof(TestAttribute)))
             {
+                var checkValidity = CheckValidity(method);
+                if (!checkValidity.isValid)
+                {
+                    classReport.invalids.Add(new InvalidTest(method.Name, $"test method {checkValidity.reason}"));
+                    continue;
+                }
+
                 tests.Enqueue(new TestInfo(className, method, beforeMethods, afterMethods, classReport));
             }
             Parallel.ForEach(tests, RunTest);
@@ -120,6 +145,11 @@ namespace MyNUnit
             ExecuteStaticMethods(info.ClassName, typeof(BeforeClassAttribute));
             foreach (var method in info.BeforeMethods)
             {
+                var checkValidity = CheckValidity(method);
+                if (!checkValidity.isValid)
+                {
+                    throw new InvalidOperationException($"before method {checkValidity.reason}");
+                }
                 method.Invoke(instance, null);
             }
 
@@ -144,6 +174,11 @@ namespace MyNUnit
 
             foreach (var method in info.AfterMethods)
             {
+                var checkValidity = CheckValidity(method);
+                if (!checkValidity.isValid)
+                {
+                    throw new InvalidOperationException($"after method {checkValidity.reason}");
+                }
                 method.Invoke(instance, null);
             }
 

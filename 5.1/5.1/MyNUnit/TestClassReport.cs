@@ -23,6 +23,11 @@ namespace MyNUnit
         public readonly ConcurrentBag<SingleTestReport> reports;
 
         /// <summary>
+        /// Tests with error
+        /// </summary>
+        public readonly ConcurrentBag<InvalidTest> invalids;
+
+        /// <summary>
         /// Basic constructor
         /// </summary>
         public TestClassReport(string assemblyName, string className)
@@ -30,6 +35,7 @@ namespace MyNUnit
             AssemblyName = assemblyName;
             ClassName = className;
             reports = new ConcurrentBag<SingleTestReport>();
+            invalids = new ConcurrentBag<InvalidTest>();
         }
 
     }

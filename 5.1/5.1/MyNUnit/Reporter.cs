@@ -20,6 +20,11 @@ namespace MyNUnit
             var passed = 0;
             var ignored = 0;
 
+            foreach (var report in classReport.invalids)
+            {
+                await writer.WriteLineAsync($"{report.Name} isn't a valid test because {report.Error}");
+            }
+
             foreach (var report in classReport.reports)
             {
                 var shortResult = "";
@@ -46,6 +51,7 @@ namespace MyNUnit
                 await writer.WriteLineAsync($"{shortResult} {report.Time} {report.Name} {result}{report.Message}");
             }
 
+            await writer.WriteLineAsync($"Invalid: {classReport.invalids.Count}");
             await writer.WriteLineAsync($"Ignored: {ignored}");
             await writer.WriteLineAsync($"Executed: {failed + passed}");
             await writer.WriteLineAsync($"Failed: {failed}");
