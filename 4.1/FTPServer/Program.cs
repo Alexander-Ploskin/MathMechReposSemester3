@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using System;
 
 namespace FTPServer
 {
@@ -7,10 +8,14 @@ namespace FTPServer
     {
         static async Task Main(string[] args)
         {
-            const int port = 750;
-            var iPAdress = IPAddress.Any;
+            if ((args.Length != 1) || !int.TryParse(args[0], out var port))
+            {
+                throw new ArgumentException("Invalid arguments");
+            }
 
-            await new ConnectionProvider(port, iPAdress).Run();
+            var ipAdress = IPAddress.Any;
+
+            await new ConnectionProvider(port, ipAdress).Run();
         }
     }
 }

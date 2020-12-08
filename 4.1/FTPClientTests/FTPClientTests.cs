@@ -1,5 +1,4 @@
 using NUnit.Framework;
-using System.Threading;
 
 namespace FTPClientTests
 {
@@ -31,7 +30,7 @@ namespace FTPClientTests
         [Test]
         public async Task CorrectListRequestsTest()
         {
-            Assert.Throws<ApplicationException>(async () => await fTPClient.ListAsync("path"));
+            Assert.ThrowsAsync<ApplicationException>(() => fTPClient.ListAsync("path"));
             stream.Position = 0;
             var request = await reader.ReadLineAsync();
             Assert.AreEqual("1 path", request);
@@ -40,7 +39,7 @@ namespace FTPClientTests
         [Test]
         public async Task CorrectGetRequestsTest()
         {
-            Assert.ThrowsAsync<ApplicationException>(async () => await fTPClient.GetAsync("path", "pathtodownload", "name"));
+            Assert.ThrowsAsync<ApplicationException>(() => fTPClient.GetAsync("path", "pathtodownload", "name"));
             stream.Position = 0;
             var request = await reader.ReadLineAsync();
             Assert.AreEqual("2 path", request);

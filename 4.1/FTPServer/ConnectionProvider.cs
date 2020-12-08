@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -18,9 +17,9 @@ namespace FTPServer
         /// </summary>
         /// <param name="port">Port to listening</param>
         /// <param name="iPAddress">ip address</param>
-        public ConnectionProvider(int port, IPAddress iPAddress)
+        public ConnectionProvider(int port, IPAddress ipAddress)
         {
-            tcpListener = new TcpListener(iPAddress, port);
+            tcpListener = new TcpListener(ipAddress, port);
         }
 
         /// <summary>

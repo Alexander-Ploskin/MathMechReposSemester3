@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FTPServer", "FTPServer\FTPS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FTPServerTests", "FTPServerTests\FTPServerTests.csproj", "{026D5B18-AAF8-4CAA-8266-89731D7F4CF5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FTPClientTests", "FTPClientTests\FTPClientTests.csproj", "{1244A701-94D1-4BB8-8EEC-0046D7FF2DA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FTPClientTests", "FTPClientTests\FTPClientTests.csproj", "{1244A701-94D1-4BB8-8EEC-0046D7FF2DA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectionTests", "ConnectionTests\ConnectionTests.csproj", "{EB35A6D4-2716-4868-93BA-EFE56FDB2440}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{1244A701-94D1-4BB8-8EEC-0046D7FF2DA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1244A701-94D1-4BB8-8EEC-0046D7FF2DA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1244A701-94D1-4BB8-8EEC-0046D7FF2DA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB35A6D4-2716-4868-93BA-EFE56FDB2440}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB35A6D4-2716-4868-93BA-EFE56FDB2440}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB35A6D4-2716-4868-93BA-EFE56FDB2440}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB35A6D4-2716-4868-93BA-EFE56FDB2440}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

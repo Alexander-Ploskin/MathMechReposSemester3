@@ -96,6 +96,10 @@ namespace FTPClient
             var request = $"{GetCode} {path}";
             await writer.WriteLineAsync(request);
             var response = await reader.ReadLineAsync();
+            if (response == null)
+            {
+                throw new ApplicationException(InvalidResponseMessage);
+            }
             var splittedResponse = response.Split(' ', 2);
             if (!long.TryParse(splittedResponse[0], out var size))
             {
