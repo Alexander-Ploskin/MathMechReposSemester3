@@ -5,18 +5,21 @@ using MyNUnit;
 
 namespace MyNUnitTests
 {
+    [TestFixture]
     public class Tests
     {
-        [SetUp]
-        public void SetUp()
+        [OneTimeSetUp]
+        public static void OneTimeSetUp()
         {
             var reports = TestRunner.RunTests("../../../../TestProject");
             basicUsageReports = reports.Where(r => r.ClassName == "Usage").FirstOrDefault();
             beforeAfterMethodsReports = reports.Where(r => r.ClassName == "BeforeAfterMethods").FirstOrDefault();
+            staticMethodsReports = reports.Where(r => r.ClassName == "StaticMethods").FirstOrDefault(); 
         }
 
-        private TestClassReport basicUsageReports;
-        private TestClassReport beforeAfterMethodsReports;
+        private static TestClassReport basicUsageReports;
+        private static TestClassReport beforeAfterMethodsReports;
+        private static TestClassReport staticMethodsReports;
 
         [Test]
         public void MainInfoTest()
@@ -94,6 +97,18 @@ namespace MyNUnitTests
         public void BeforeAfterMethodsTest()
         {
             Assert.IsTrue(beforeAfterMethodsReports.reports.Any(r => r.Passed));
+        }
+
+        [Test]
+        public void StaticMethodsTest()
+        {
+            Assert.IsTrue(staticMethodsReports.reports.Any(r => r.Passed));
+        }
+
+        [Test]
+        public void InvalidAssemblyTest()
+        {
+            Assert.Throws<InvalidAssemlyException>(() => TestRunner.RunTests("../../../../InvalidTestProject"));
         }
     }
 }

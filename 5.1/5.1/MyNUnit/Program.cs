@@ -24,6 +24,12 @@ namespace MyNUnit
                     await Reporter.WriteReport(report, Console.Out);
                 }
             }
+            catch (InvalidAssemlyException e)
+            {
+                Console.WriteLine("Invalid test assembly");
+                await ErrorsReporter.WriteErrors(e.invalidClasses, Console.Out);
+
+            }
             catch (DirectoryNotFoundException)
             {
                 Console.WriteLine($"Counldn't find any directories in {path}");
