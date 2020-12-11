@@ -51,6 +51,5 @@ namespace MyNUnit
             await writer.WriteLineAsync($"Failed: {failed}");
             await writer.WriteLineAsync($"Passed: {passed}");
         }
-
     }
 }

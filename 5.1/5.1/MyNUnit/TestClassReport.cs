@@ -31,6 +31,5 @@ namespace MyNUnit
             ClassName = className;
             reports = new ConcurrentBag<SingleTestReport>();
         }
-
     }
 }

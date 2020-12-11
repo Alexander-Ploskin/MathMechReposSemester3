@@ -149,6 +149,5 @@ namespace MyNUnit
 
             ExecuteStaticMethods(info.ClassName, typeof(AfterClassAttribute));
         }
-
     }
 }

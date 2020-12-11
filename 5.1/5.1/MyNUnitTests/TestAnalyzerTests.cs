@@ -85,6 +85,5 @@ namespace MyNUnitTests
             Assert.AreEqual(1, methodReport.Count());
             Assert.AreEqual(new List<string>() { "should be void" }, methodReport.FirstOrDefault().Errors);
         }
-
     }
 }

@@ -80,6 +80,5 @@ namespace MyNUnit
 
         private static IEnumerable<MethodInfo> GetMethodsWithAttributes(Type className, IEnumerable<Type> attributeName)
             => className.GetMethods().Where(m => m.GetCustomAttributes().Any(a => attributeName.Contains(a.GetType())));
-
     }
 }

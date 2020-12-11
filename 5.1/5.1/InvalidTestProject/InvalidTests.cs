@@ -113,6 +113,5 @@ namespace TestProject
         public void NotStaticAfterClassMethod()
         {
         }
-
     }
 }
