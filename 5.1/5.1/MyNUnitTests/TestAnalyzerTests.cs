@@ -34,7 +34,7 @@ namespace MyNUnitTests
         [Test]
         public void MethodReturnsSomethingAndHasParamsTest(string name)
         {
-            var methodReport = report.invalidMethods.Where(r => r.Name == name);
+            var methodReport = report.InvalidMethods.Where(r => r.Name == name);
             Assert.AreEqual(1, methodReport.Count());
             Assert.AreEqual(new List<string>() { "should be void", "shouldn't has any parameters" }, methodReport.FirstOrDefault().Errors);
         }
@@ -44,7 +44,7 @@ namespace MyNUnitTests
         [Test]
         public void StaticNotStaticMethodTest(string name)
         {
-            var methodReport = report.invalidMethods.Where(r => r.Name == name);
+            var methodReport = report.InvalidMethods.Where(r => r.Name == name);
             Assert.AreEqual(1, methodReport.Count());
             Assert.AreEqual(new List<string>() { "should be static" }, methodReport.FirstOrDefault().Errors);
         }
@@ -55,7 +55,7 @@ namespace MyNUnitTests
         [Test]
         public void NotStaticStaticMethodTest(string name)
         {
-            var methodReport = report.invalidMethods.Where(r => r.Name == name);
+            var methodReport = report.InvalidMethods.Where(r => r.Name == name);
             Assert.AreEqual(1, methodReport.Count());
             Assert.AreEqual(new List<string>() { "shouldn't be static" }, methodReport.FirstOrDefault().Errors);
         }
@@ -68,7 +68,7 @@ namespace MyNUnitTests
         [Test]
         public void MethodHasParamsTest(string name)
         {
-            var methodReport = report.invalidMethods.Where(r => r.Name == name);
+            var methodReport = report.InvalidMethods.Where(r => r.Name == name);
             Assert.AreEqual(1, methodReport.Count());
             Assert.AreEqual(new List<string>() { "shouldn't has any parameters" }, methodReport.FirstOrDefault().Errors);
         }
@@ -81,7 +81,7 @@ namespace MyNUnitTests
         [Test]
         public void MethodReturnsSomethingTest(string name)
         {
-            var methodReport = report.invalidMethods.Where(r => r.Name == name);
+            var methodReport = report.InvalidMethods.Where(r => r.Name == name);
             Assert.AreEqual(1, methodReport.Count());
             Assert.AreEqual(new List<string>() { "should be void" }, methodReport.FirstOrDefault().Errors);
         }

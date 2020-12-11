@@ -15,7 +15,7 @@ namespace MyNUnit
         public InvalidTestClassReport(string name, ICollection<InvalidMethodReport> invalidMethods)
         {
             Name = name;
-            this.invalidMethods = invalidMethods;
+            InvalidMethods = invalidMethods;
         }
 
         /// <summary>
@@ -26,6 +26,6 @@ namespace MyNUnit
         /// <summary>
         /// Reports of invalid methods
         /// </summary>
-        public readonly ICollection<InvalidMethodReport> invalidMethods;
+        public ICollection<InvalidMethodReport> InvalidMethods { get; }
     }
 }

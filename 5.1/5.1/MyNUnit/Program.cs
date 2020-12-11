@@ -27,7 +27,7 @@ namespace MyNUnit
             catch (InvalidAssemlyException e)
             {
                 Console.WriteLine("Invalid test assembly");
-                await ErrorsReporter.WriteErrors(e.invalidClasses, Console.Out);
+                await ErrorsReporter.WriteErrors(e.InvalidClasses, Console.Out);
 
             }
             catch (DirectoryNotFoundException)

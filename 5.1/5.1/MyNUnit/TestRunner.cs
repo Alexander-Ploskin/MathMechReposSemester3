@@ -113,7 +113,7 @@ namespace MyNUnit
 
             if (attribute.Ignore != null)
             {
-                info.ClassReport.reports.Add(new SingleTestReport(info.Method.Name, attribute.Ignore));
+                info.ClassReport.Reports.Add(new SingleTestReport(info.Method.Name, attribute.Ignore));
                 return;
             }
 
@@ -139,7 +139,7 @@ namespace MyNUnit
             }
             finally
             {
-                info.ClassReport.reports.Add(new SingleTestReport(info.Method.Name, attribute.Expected, actual, stopwatch.Elapsed));
+                info.ClassReport.Reports.Add(new SingleTestReport(info.Method.Name, attribute.Expected, actual, stopwatch.Elapsed));
             }
 
             foreach (var method in info.AfterMethods)

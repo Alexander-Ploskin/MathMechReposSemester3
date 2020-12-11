@@ -19,7 +19,7 @@ namespace MyNUnit
             foreach (var report in reports)
             {
                 await writer.WriteLineAsync($"{report.Name}:");
-                foreach (var method in report.invalidMethods)
+                foreach (var method in report.InvalidMethods)
                 {
                     foreach (var error in method.Errors)
                     {

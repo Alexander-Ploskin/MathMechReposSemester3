@@ -34,7 +34,7 @@ namespace MyNUnit
                     var errors = FindErrors(method, true);
                     if (errors.Count != 0)
                     {
-                        classReport.invalidMethods.Add(new InvalidMethodReport(method.Name, errors));
+                        classReport.InvalidMethods.Add(new InvalidMethodReport(method.Name, errors));
                     }
                 }
                 foreach (var method in notStaticMethods)
@@ -42,11 +42,11 @@ namespace MyNUnit
                     var errors = FindErrors(method, false);
                     if (errors.Count != 0)
                     {
-                        classReport.invalidMethods.Add(new InvalidMethodReport(method.Name, errors));
+                        classReport.InvalidMethods.Add(new InvalidMethodReport(method.Name, errors));
                     }
                 }
 
-                if (classReport.invalidMethods.Count() != 0)
+                if (classReport.InvalidMethods.Count() != 0)
                 {
                     report.Add(classReport);
                 }

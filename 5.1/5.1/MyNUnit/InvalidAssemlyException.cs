@@ -14,9 +14,9 @@ namespace MyNUnit
         /// <param name="invalidClasses">Invalid class reports for all invalid test classes</param>
         public InvalidAssemlyException(IEnumerable<InvalidTestClassReport> invalidClasses)
         {
-            this.invalidClasses = invalidClasses;
+            InvalidClasses = invalidClasses;
         }
 
-        public readonly IEnumerable<InvalidTestClassReport> invalidClasses;
+        public IEnumerable<InvalidTestClassReport> InvalidClasses { get; };
     }
 }

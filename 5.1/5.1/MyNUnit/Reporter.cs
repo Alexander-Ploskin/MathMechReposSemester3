@@ -20,7 +20,7 @@ namespace MyNUnit
             var passed = 0;
             var ignored = 0;
 
-            foreach (var report in classReport.reports)
+            foreach (var report in classReport.Reports)
             {
                 var shortResult = "";
                 var result = "";

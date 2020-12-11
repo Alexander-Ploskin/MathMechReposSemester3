@@ -20,7 +20,7 @@ namespace MyNUnit
         /// <summary>
         /// Report for every test, that belongs to the class
         /// </summary>
-        public readonly ConcurrentBag<SingleTestReport> reports;
+        public ConcurrentBag<SingleTestReport> Reports { get; }
 
         /// <summary>
         /// Basic constructor
@@ -29,7 +29,7 @@ namespace MyNUnit
         {
             AssemblyName = assemblyName;
             ClassName = className;
-            reports = new ConcurrentBag<SingleTestReport>();
+            Reports = new ConcurrentBag<SingleTestReport>();
         }
     }
 }
