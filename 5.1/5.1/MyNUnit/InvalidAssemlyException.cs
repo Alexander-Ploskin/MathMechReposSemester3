@@ -17,6 +17,6 @@ namespace MyNUnit
             InvalidClasses = invalidClasses;
         }
 
-        public IEnumerable<InvalidTestClassReport> InvalidClasses { get; };
+        public IEnumerable<InvalidTestClassReport> InvalidClasses { get; }
     }
 }

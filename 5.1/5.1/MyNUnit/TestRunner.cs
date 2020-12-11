@@ -73,6 +73,7 @@ namespace MyNUnit
         /// </summary>
         private static void RunTests(Type className)
         {
+            ExecuteStaticMethods(className, typeof(BeforeClassAttribute));
             var classReport = new TestClassReport(className.Assembly.FullName.Split(' ')[0].TrimEnd(','), className.Name);
             report.Enqueue(classReport);
 
@@ -84,6 +85,7 @@ namespace MyNUnit
                 tests.Enqueue(new TestInfo(className, method, beforeMethods, afterMethods, classReport));
             }
             Parallel.ForEach(tests, RunTest);
+            ExecuteStaticMethods(className, typeof(AfterClassAttribute));
         }
 
         private class TestInfo
@@ -117,7 +119,6 @@ namespace MyNUnit
 
             var instance = Activator.CreateInstance(info.ClassName);
 
-            ExecuteStaticMethods(info.ClassName, typeof(BeforeClassAttribute));
             foreach (var method in info.BeforeMethods)
             {
                 method.Invoke(instance, null);
@@ -146,8 +147,6 @@ namespace MyNUnit
             {
                 method.Invoke(instance, null);
             }
-
-            ExecuteStaticMethods(info.ClassName, typeof(AfterClassAttribute));
         }
     }
 }
