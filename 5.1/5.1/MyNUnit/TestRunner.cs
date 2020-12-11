@@ -107,8 +107,6 @@ namespace MyNUnit
 
         private static void RunTest(TestInfo info)
         {
-            var instance = Activator.CreateInstance(info.ClassName);
-
             var attribute = (TestAttribute)info.Method.GetCustomAttribute(typeof(TestAttribute));
 
             if (attribute.Ignore != null)
@@ -116,6 +114,8 @@ namespace MyNUnit
                 info.ClassReport.Reports.Add(new SingleTestReport(info.Method.Name, attribute.Ignore));
                 return;
             }
+
+            var instance = Activator.CreateInstance(info.ClassName);
 
             ExecuteStaticMethods(info.ClassName, typeof(BeforeClassAttribute));
             foreach (var method in info.BeforeMethods)
