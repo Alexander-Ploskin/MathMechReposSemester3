@@ -1,37 +1,64 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using System.IO;
 using MyNUnitWeb.Models;
+using System.Threading.Tasks;
+using System;
+using MyNUnit;
 
 namespace MyNUnitWeb.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IWebHostEnvironment environment;
+        private CurrentStateModel currentState;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IWebHostEnvironment environment)
         {
-            _logger = logger;
+            if (!Directory.Exists($"{environment.WebRootPath}/Temp)"))
+            {
+                Directory.CreateDirectory($"{environment.WebRootPath}/Temp");
+            }
+            this.environment = environment;
+            currentState = new CurrentStateModel(environment);
         }
 
         public IActionResult Index()
         {
-            return View();
+            return View("Index", currentState);
         }
 
-        public IActionResult Privacy()
+        public IActionResult History()
         {
-            return View();
+            return View("History.chtml");
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Docs()
         {
-            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
+            return View("Docs.chtml");
+        }
+
+        [HttpPost]
+        public IActionResult AddAssembly(IFormFile file)
+        {
+            if (file != null)
+            {
+                using (var fileStream = new FileStream($"{environment.WebRootPath}/Temp/{file.FileName}", FileMode.Create))
+                {
+                    file.CopyTo(fileStream);
+                }
+            }
+
+            return RedirectToAction("Index", currentState);
+        }
+
+        public IActionResult Test()
+        {
+            var reports = TestRunner.RunTests($"{environment.WebRootPath}/Temp");
+            currentState.Report.Time = DateTime.Now;
+            currentState.Report.ClassReports = reports;
+            return RedirectToAction("Index", currentState);
         }
     }
 }

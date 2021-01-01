@@ -1,8 +1,42 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model CurrentStateModel
+@using MyNUnitWeb.Controllers;
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+
+@{
+    Layout = "_Layout";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="/favicon.ico">
+
+    <title>MyNUnit</title>
+
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+<main role="main" class="container" style="padding:100px">
+    <form asp-action="AddAssembly" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".dll" /><br />
+        <input type="submit" value="Загрузить" />
+    </form>
+    @foreach (var item in Model.Assemblies)
+    {
+        <div>
+            <img src="/dll.svg" id="@item" width="5%" />
+            <label for="@item">@item</label>
+        </div>
+    }
+    <form asp-action="Test" method="post">
+        <input type="submit" value="Button" />
+    </form>
+    <p>@Model.Report.Time</p>
+</main>
+</body>
+</html>
