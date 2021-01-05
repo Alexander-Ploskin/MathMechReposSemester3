@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using MyNUnitWeb.Models;
-using System.Threading.Tasks;
-using System;
 using MyNUnit;
 
 namespace MyNUnitWeb.Controllers
@@ -12,15 +13,17 @@ namespace MyNUnitWeb.Controllers
     public class HomeController : Controller
     {
         private readonly IWebHostEnvironment environment;
+        private readonly TestArchive archive;
         private CurrentStateModel currentState;
 
-        public HomeController(IWebHostEnvironment environment)
+        public HomeController(IWebHostEnvironment environment, TestArchive archive)
         {
             if (!Directory.Exists($"{environment.WebRootPath}/Temp)"))
             {
                 Directory.CreateDirectory($"{environment.WebRootPath}/Temp");
             }
             this.environment = environment;
+            this.archive = archive;
             currentState = new CurrentStateModel(environment);
         }
 
@@ -31,12 +34,12 @@ namespace MyNUnitWeb.Controllers
 
         public IActionResult History()
         {
-            return View("History.chtml");
+            return View("History", archive.TestRuns.Include("Reports").ToList());
         }
 
         public IActionResult Docs()
         {
-            return View("Docs.chtml");
+            return View("Docs");
         }
 
         [HttpPost]
@@ -52,12 +55,46 @@ namespace MyNUnitWeb.Controllers
 
             return RedirectToAction("Index", currentState);
         }
-
+    
         public IActionResult Test()
         {
             var reports = TestRunner.RunTests($"{environment.WebRootPath}/Temp");
-            currentState.Report.Time = DateTime.Now;
-            currentState.Report.ClassReports = reports;
+            var testRunReport = new TestRunModel { DateTime = DateTime.Now };
+            foreach (var classReport in reports)
+            {
+                var classReportModel = new TestClassReportModel
+                {
+                    AssemblyName = classReport.AssemblyName,
+                    Name = classReport.ClassName
+                };
+                foreach (var testReport in classReport.Reports)
+                {
+                    var testReportModel = new TestReportModel
+                    {
+                        Name = testReport.Name,
+                        Ignored = testReport.Ignored,
+                        Message = testReport.Message,
+                        Passed = testReport.Passed,
+                        Time = testReport.Time
+                    };
+                    classReportModel.TestReports.Add(testReportModel);
+                }
+                
+                currentState.Reports.Add(classReportModel);
+                testRunReport.Reports.Add(classReportModel);
+            }
+
+            archive.TestRuns.Add(testRunReport);
+            archive.SaveChanges();
+            return View("Index", currentState);
+        }
+
+        public IActionResult Clear()
+        {
+            foreach (var file in Directory.GetFiles($"{environment.WebRootPath}/Temp"))
+            {
+                System.IO.File.Delete(file);
+            }
             return RedirectToAction("Index", currentState);
         }
     }

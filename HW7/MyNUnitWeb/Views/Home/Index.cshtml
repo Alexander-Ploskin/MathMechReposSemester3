@@ -1,8 +1,6 @@
 ﻿@model CurrentStateModel
-@using MyNUnitWeb.Controllers;
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
 
 @{
     Layout = "_Layout";
@@ -13,30 +11,118 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="icon" href="/favicon.ico">
-
+    
     <title>MyNUnit</title>
-
-    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
-<main role="main" class="container" style="padding:100px">
-    <form asp-action="AddAssembly" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".dll" /><br />
-        <input type="submit" value="Загрузить" />
+<main role="main">
+    <h3>Assemblies:</h3>
+    <div class="assemblyContainer">
+        @foreach (var item in Model.Assemblies)
+        {
+            <div class="assembly">
+                <img src="/dll.svg" width="10%" id="@item"/>
+                <label for="@item">@item</label>
+            </div>
+        }
+    </div>
+    <form asp-action="AddAssembly" method="post" enctype="multipart/form-data" class="uploadForm">
+        <input type="file" name="file" accept=".dll"/><br/>
+        <input type="submit" value="Upload"/>
     </form>
-    @foreach (var item in Model.Assemblies)
+    <form asp-action="Clear">
+        <input type="submit" class="clearButton" value="Clear">
+    </form>
+    <form asp-action="Test" method="post">
+        <input type="submit" value="Run"/>
+    </form>
+    <div class="col-sm">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th scope="col">Result</th>
+                <th scope="col">Class</th>
+                <th scope="col">Name</th>
+                <th scope="col">Time</th>
+                <th scope="col">Message</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var testClassReport in Model.Reports)
+            {
+                foreach (var testMethodReport in testClassReport.TestReports)
+                {
+                    var src = "";
+                    if (testMethodReport.Passed)
+                    {
+                        src = "/passedIcon.svg";
+                    }
+                    else if (testMethodReport.Ignored)
+                    {
+                        src = "/ignoredIcon.svg";
+                    }
+                    else
+                    {
+                        src = "/failedIcon.svg";
+                    }
+                    <tr>
+                        <th scope="row"><img src="@src"/></th>
+                        <td>@testClassReport.Name</td>
+                        <td>@testMethodReport.Name</td>
+                        <td>@testMethodReport.Time</td>
+                        <td>@testMethodReport.Message</td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    </div>
+    @foreach (var classReport in Model.Reports)
     {
-        <div>
-            <img src="/dll.svg" id="@item" width="5%" />
-            <label for="@item">@item</label>
+        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#@classReport.Name"
+                aria-expanded="false" aria-controls="@classReport.Name">@classReport.Name</button><br/>
+        <div class="collapse multi-collapse" id="@classReport.Name">
+            <div class="card card-body">
+                <div class="col-sm">
+                            <table class="table table-bordered">
+                              <thead>
+                              <tr>
+                                <th scope="col">Result</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Time</th>
+                                <th scope="col">Message</th>
+                              </tr>
+                              </thead>
+                              <tbody>
+                              @foreach (var testMethodReport in classReport.TestReports)
+                              {
+                                var src = "";
+                                if (testMethodReport.Passed)
+                                {
+                                  src = "/passedIcon.svg";
+                                }
+                                else if (testMethodReport.Ignored)
+                                {
+                                  src = "/ignoredIcon.svg";
+                                }
+                                else
+                                {
+                                  src = "/failedIcon.svg";
+                                }
+                                <tr>
+                                  <th scope="row"><img src="@src"/></th>
+                                  <td>@testMethodReport.Name</td>
+                                  <td>@testMethodReport.Time</td>
+                                  <td>@testMethodReport.Message</td>
+                                </tr>
+                              }
+                              </tbody>
+                            </table>
+                            </div>
+            </div>
         </div>
     }
-    <form asp-action="Test" method="post">
-        <input type="submit" value="Button" />
-    </form>
-    <p>@Model.Report.Time</p>
+    
 </main>
 </body>
 </html>

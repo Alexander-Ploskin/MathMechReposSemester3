@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace MyNUnitWeb.Models
 {
@@ -12,15 +10,12 @@ namespace MyNUnitWeb.Models
         private readonly IWebHostEnvironment environment;
 
         public CurrentStateModel(IWebHostEnvironment environment)
-        {
-            this.environment = environment;
-            Report = new ReportModel();
-        }
-
+            => this.environment = environment;
+        
         public IEnumerable<string> Assemblies => Directory.EnumerateFiles($"{environment.WebRootPath}/Temp").
             Select(f => Path.GetFileName(f));
 
-        public ReportModel Report { get; private set; }
+        public List<TestClassReportModel> Reports = new List<TestClassReportModel>();
 
     }
 }
