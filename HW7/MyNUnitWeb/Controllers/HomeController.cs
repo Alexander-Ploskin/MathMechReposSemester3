@@ -160,6 +160,9 @@ namespace MyNUnitWeb.Controllers
             return View("Index", currentState);
         }
 
+        /// <summary>
+        /// Redirects to the history page
+        /// </summary>
         public IActionResult History()
         {
             return View("History", archive.RunModels.Include(run => run.AssemblyReports).ThenInclude(report => report.TestReports).ToList());
