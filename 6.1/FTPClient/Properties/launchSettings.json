@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FTPClient": {
+      "commandName": "Project",
+      "commandLineArgs": "750 localhost"
+    }
+  }
+}
