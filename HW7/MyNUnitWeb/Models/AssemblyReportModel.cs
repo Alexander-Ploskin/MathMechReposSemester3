@@ -24,7 +24,25 @@ namespace MyNUnitWeb.Models
         /// </summary>
         public bool Valid { get => !TestReports.Any(r => !r.Valid); }
 
+        /// <summary>
+        /// Unique value to be key in db
+        /// </summary>
         [Key]
         public string Id { get; set; }
+
+        /// <summary>
+        /// Number of passed tests
+        /// </summary>
+        public int Passed { get; set; }
+
+        /// <summary>
+        /// Number of failed tests
+        /// </summary>
+        public int Failed { get; set; }
+
+        /// <summary>
+        /// Number of ignored tests
+        /// </summary>
+        public int Ignored { get; set; }
     }
 }

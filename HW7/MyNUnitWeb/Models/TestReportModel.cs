@@ -38,6 +38,9 @@ namespace MyNUnitWeb.Models
         /// </summary>
         public string Message { get; set; }
 
+        /// <summary>
+        /// Unique value to be key in db
+        /// </summary>
         [Key]
         public string Id { get; set; }
     }

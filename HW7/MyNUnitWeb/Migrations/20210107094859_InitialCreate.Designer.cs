@@ -10,7 +10,7 @@ using MyNUnitWeb.Models;
 namespace MyNUnitWeb.Migrations
 {
     [DbContext(typeof(TestArchive))]
-    [Migration("20210107084710_InitialCreate")]
+    [Migration("20210107094859_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,8 +26,17 @@ namespace MyNUnitWeb.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("Failed")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Ignored")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Passed")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("TestRunModelDateTime")
                         .HasColumnType("datetime2");
@@ -36,7 +45,7 @@ namespace MyNUnitWeb.Migrations
 
                     b.HasIndex("TestRunModelDateTime");
 
-                    b.ToTable("ReportAssemblies");
+                    b.ToTable("AssemblyReportModels");
                 });
 
             modelBuilder.Entity("MyNUnitWeb.Models.TestReportModel", b =>
@@ -69,7 +78,7 @@ namespace MyNUnitWeb.Migrations
 
                     b.HasIndex("AssemblyReportModelId");
 
-                    b.ToTable("ReportsTests");
+                    b.ToTable("TestReportModels");
                 });
 
             modelBuilder.Entity("MyNUnitWeb.Models.TestRunModel", b =>
@@ -79,7 +88,7 @@ namespace MyNUnitWeb.Migrations
 
                     b.HasKey("DateTime");
 
-                    b.ToTable("RunHistory");
+                    b.ToTable("RunModels");
                 });
 
             modelBuilder.Entity("MyNUnitWeb.Models.AssemblyReportModel", b =>

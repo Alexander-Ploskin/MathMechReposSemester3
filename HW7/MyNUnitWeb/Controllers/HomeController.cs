@@ -104,6 +104,18 @@ namespace MyNUnitWeb.Controllers
                             Message = test.Message,
                             Id = dateTime.ToString() + test.Name + testClassReport.ClassName
                         };
+                        if (test.Passed == true)
+                        {
+                            assemblyReport.Passed++;
+                        }
+                        else if (test.Passed == false)
+                        {
+                            assemblyReport.Failed++;
+                        }
+                        else
+                        {
+                            assemblyReport.Ignored++;
+                        }
 
                         assemblyReport.TestReports.Add(newTestReportModel);
                     }
@@ -150,7 +162,7 @@ namespace MyNUnitWeb.Controllers
 
         public IActionResult History()
         {
-            return View("History", archive.RunHistory.Include(run => run.AssemblyReports).ThenInclude(report => report.TestReports).ToList());
+            return View("History", archive.RunModels.Include(run => run.AssemblyReports).ThenInclude(report => report.TestReports).ToList());
         }
     }
 }

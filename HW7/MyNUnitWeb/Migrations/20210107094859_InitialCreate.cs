@@ -8,37 +8,40 @@ namespace MyNUnitWeb.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "RunHistory",
+                name: "RunModels",
                 columns: table => new
                 {
                     DateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RunHistory", x => x.DateTime);
+                    table.PrimaryKey("PK_RunModels", x => x.DateTime);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ReportAssemblies",
+                name: "AssemblyReportModels",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Passed = table.Column<int>(type: "int", nullable: false),
+                    Failed = table.Column<int>(type: "int", nullable: false),
+                    Ignored = table.Column<int>(type: "int", nullable: false),
                     TestRunModelDateTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ReportAssemblies", x => x.Id);
+                    table.PrimaryKey("PK_AssemblyReportModels", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ReportAssemblies_RunHistory_TestRunModelDateTime",
+                        name: "FK_AssemblyReportModels_RunModels_TestRunModelDateTime",
                         column: x => x.TestRunModelDateTime,
-                        principalTable: "RunHistory",
+                        principalTable: "RunModels",
                         principalColumn: "DateTime",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ReportsTests",
+                name: "TestReportModels",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -52,36 +55,36 @@ namespace MyNUnitWeb.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ReportsTests", x => x.Id);
+                    table.PrimaryKey("PK_TestReportModels", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ReportsTests_ReportAssemblies_AssemblyReportModelId",
+                        name: "FK_TestReportModels_AssemblyReportModels_AssemblyReportModelId",
                         column: x => x.AssemblyReportModelId,
-                        principalTable: "ReportAssemblies",
+                        principalTable: "AssemblyReportModels",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReportAssemblies_TestRunModelDateTime",
-                table: "ReportAssemblies",
+                name: "IX_AssemblyReportModels_TestRunModelDateTime",
+                table: "AssemblyReportModels",
                 column: "TestRunModelDateTime");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReportsTests_AssemblyReportModelId",
-                table: "ReportsTests",
+                name: "IX_TestReportModels_AssemblyReportModelId",
+                table: "TestReportModels",
                 column: "AssemblyReportModelId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ReportsTests");
+                name: "TestReportModels");
 
             migrationBuilder.DropTable(
-                name: "ReportAssemblies");
+                name: "AssemblyReportModels");
 
             migrationBuilder.DropTable(
-                name: "RunHistory");
+                name: "RunModels");
         }
     }
 }

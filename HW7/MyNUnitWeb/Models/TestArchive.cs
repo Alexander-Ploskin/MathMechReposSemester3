@@ -4,16 +4,28 @@ namespace MyNUnitWeb.Models
 {
     public class TestArchive : DbContext
     {
-
+        /// <summary>
+        /// Constructir
+        /// </summary>
+        /// <param name="options">Context options</param>
         public TestArchive(DbContextOptions<TestArchive> options)
                 : base(options)
         {
         }
 
-        public DbSet<TestRunModel> RunHistory { get; set; }
+        /// <summary>
+        /// Collections of runs from db
+        /// </summary>
+        public DbSet<TestRunModel> RunModels { get; set; }
 
-        public DbSet<AssemblyReportModel> ReportAssemblies { get; set; }
+        /// <summary>
+        /// Conjugated data
+        /// </summary>
+        public DbSet<AssemblyReportModel> AssemblyReportModels { get; set; }
 
-        public DbSet<TestReportModel> ReportsTests { get; set; }
+        /// <summary>
+        /// Conjugated data
+        /// </summary>
+        public DbSet<TestReportModel> TestReportModels { get; set; }
     }
 }

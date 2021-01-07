@@ -16,98 +16,107 @@
 </head>
 <body>
     <main role="main" style="margin-top: 10rem">
-        <h3>Assemblies:</h3>
-        <div class="assemblyContainer">
-            @foreach (var item in Model.Assemblies)
+        <div class="controlArea">
+            <h3>Assemblies:</h3>
+            <form asp-action="AddAssembly" enctype="multipart/form-data">
+                <input type="file" name="file" accept=".dll" />
+                <input type="submit" value="Upload" />
+            </form>
+            <form asp-action="Clear" style="margin-top: 1rem">
+                <input type="submit" value="Clear">
+            </form>
+            <div class="assemblyContainer">
+                @foreach (var item in Model.Assemblies)
+                {
+                    <div class="assembly">
+                        <img src="/dll.svg" width="80rem" id="@item" />
+                        <label for="@item">@item</label>
+                    </div>
+                }
+            </div>
+            <form asp-action="Test" method="post">
+                <input type="submit" value="Run" class="btn btn-primary btn-lg"/>
+            </form>
+
+        </div>
+
+
+        <div class="resultArea">
+            @foreach (var assemblyReport in Model.AssemblyReports)
             {
-                <div class="assembly">
-                    <img src="/dll.svg" width="10%" id="@item" />
-                    <label for="@item">@item</label>
-                </div>
+                if (assemblyReport.Valid)
+                {
+                    <h3>@assemblyReport.Name</h3>
+                    <p>Passed: @assemblyReport.Passed</p>
+                    <p>Failed: @assemblyReport.Failed</p>
+                    <p>Ignored: @assemblyReport.Ignored</p>
+                    <div class="col-sm">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Result</th>
+                                    <th scope="col">Class</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Time</th>
+                                    <th scope="col">Message</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var testMethodReport in assemblyReport.TestReports)
+                                {
+                                    var src = "";
+                                    if (testMethodReport.Passed == true)
+                                    {
+                                        src = "/passedIcon.svg";
+                                    }
+                                    else if (testMethodReport.Passed == false)
+                                    {
+                                        src = "/ignoredIcon.svg";
+                                    }
+                                    else
+                                    {
+                                        src = "/failedIcon.svg";
+                                    }
+                                    <tr>
+                                        <th scope="row"><img src="@src" /></th>
+                                        <td>@testMethodReport.ClassName</td>
+                                        <td>@testMethodReport.Name</td>
+                                        <td>@testMethodReport.Time</td>
+                                        <td>@testMethodReport.Message</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <h3><img src="/warning.svg" width="30rem" />   Error in @assemblyReport.Name</h3>
+                    <h4>Invalid methods:</h4>
+                    <div class="col-sm">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Class</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Error</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var testMethodReport in assemblyReport.TestReports)
+                                {
+                                    <tr>
+                                        <th scope="row">@testMethodReport.ClassName</th>
+                                        <td>@testMethodReport.Name</td>
+                                        <td>@testMethodReport.Message</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
             }
         </div>
-        <form asp-action="AddAssembly" method="post" enctype="multipart/form-data" class="uploadForm">
-            <input type="file" name="file" accept=".dll" /><br />
-            <input type="submit" value="Upload" />
-        </form>
-        <form asp-action="Clear">
-            <input type="submit" class="clearButton" value="Clear">
-        </form>
-        <form asp-action="Test" method="post">
-            <input type="submit" value="Run" />
-        </form>
-
-        @foreach (var assemblyReport in Model.AssemblyReports)
-        {
-            if (assemblyReport.Valid)
-            {
-                <h3>@assemblyReport.Name</h3>
-                <div class="col-sm">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th scope="col">Result</th>
-                                <th scope="col">Class</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Time</th>
-                                <th scope="col">Message</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var testMethodReport in assemblyReport.TestReports)
-                            {
-                                var src = "";
-                                if (testMethodReport.Passed == true)
-                                {
-                                    src = "/passedIcon.svg";
-                                }
-                                else if (testMethodReport.Passed == false)
-                                {
-                                    src = "/ignoredIcon.svg";
-                                }
-                                else
-                                {
-                                    src = "/failedIcon.svg";
-                                }
-                                <tr>
-                                    <th scope="row"><img src="@src" /></th>
-                                    <td>@testMethodReport.ClassName</td>
-                                    <td>@testMethodReport.Name</td>
-                                    <td>@testMethodReport.Time</td>
-                                    <td>@testMethodReport.Message</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            }
-            else
-            {
-                <h3>Invalid test assembly @assemblyReport.Name</h3>
-                <p>Invalid methods:</p>
-                <div class="col-sm">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th scope="col">Class</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Error</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var testMethodReport in assemblyReport.TestReports)
-                            {
-                                <tr>
-                                    <th scope="row">@testMethodReport.ClassName</th>
-                                    <td>@testMethodReport.Name</td>
-                                    <td>@testMethodReport.Message</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            }
-        }
     </main>
 </body>
 </html>

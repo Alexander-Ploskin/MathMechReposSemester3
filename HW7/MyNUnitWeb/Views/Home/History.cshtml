@@ -27,6 +27,9 @@
                     @foreach (var assemblyReport in testRun.AssemblyReports)
                     {
                         <h3>@assemblyReport.Name</h3>
+                        <p>Passed: @assemblyReport.Passed</p>
+                        <p>Failed: @assemblyReport.Failed</p>
+                        <p>Ignored: @assemblyReport.Ignored</p>
                         <div class="col-sm">
                             <table class="table table-bordered">
                                 <thead>
