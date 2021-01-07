@@ -5,19 +5,3 @@
     margin-top: 2rem;
     margin-bottom: 2rem;
 }
-
-.controlArea {
-    margin-bottom: 4rem;
-}
-
-.uploadArea {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    margin-bottom: 2rem;
-}
-
-.uploadForm {
-    display: flex;
-    flex-direction: row;
-}
