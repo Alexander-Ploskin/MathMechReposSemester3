@@ -12,11 +12,17 @@ namespace MyNUnit
         /// </summary>
         /// <param name="name">Name of the class</param>
         /// <param name="invalidMethods">Collection of invalid methods reports</param>
-        public InvalidTestClassReport(string name, ICollection<InvalidMethodReport> invalidMethods)
+        public InvalidTestClassReport(string name, ICollection<InvalidMethodReport> invalidMethods, string assemblyName)
         {
             Name = name;
+            AssemblyName = assemblyName;
             InvalidMethods = invalidMethods;
         }
+
+        /// <summary>
+        /// Name of assembly that contains class
+        /// </summary>
+        public string AssemblyName { get; }
 
         /// <summary>
         /// Name of the class
