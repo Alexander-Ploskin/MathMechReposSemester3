@@ -14,7 +14,7 @@ namespace FTPClient
         private readonly StreamWriter writer;
 
         /// <summary>
-        /// Creates the new instance of FTPClient, that will work with the choosen stream
+        /// Creates the new instance of FTPClient, that will work with the chosen stream
         /// </summary>
         /// <param name="stream">Stream </param>
         public FTPClient(Stream stream)

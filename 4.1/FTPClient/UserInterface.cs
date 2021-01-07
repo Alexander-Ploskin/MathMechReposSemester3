@@ -15,10 +15,10 @@ namespace FTPClient
         /// <summary>
         /// Creates new instance of UI by FTP client
         /// </summary>
-        /// <param name="fTPClient">Client to work with the server</param>
-        public UserInterface(FTPClient fTPClient)
+        /// <param name="ftpClient">Client to work with the server</param>
+        public UserInterface(FTPClient ftpClient)
         {
-            ftpClient = fTPClient;
+            this.ftpClient = ftpClient;
         }
 
         private const string ExitCommand = "q";

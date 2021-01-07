@@ -149,16 +149,16 @@ namespace FTPClientTests
         {
             const string sentFilePath = TestDirectoryPath + "/NotEmptyFile.txt";
             const string recievedFileName = "RecievedNotEmptyFile.txt";
-            var fs = new FileStream(sentFilePath, FileMode.Open);
+            using var fs = new FileStream(sentFilePath, FileMode.Open);
             await writer.WriteLineAsync(SimulationOfRequestToCorrectStreamPosition + new FileInfo(sentFilePath).Length);
             await fs.CopyToAsync(writer.BaseStream);
             fs.Close();
             writer.BaseStream.Position = 0;
             await fTPClient.GetAsync("path", TestDirectoryPath, recievedFileName);
 
-            const string recievedFilePath = TestDirectoryPath + "/" + recievedFileName;
-            Assert.IsTrue(File.Exists(recievedFilePath));
-            var recievedFileFs = new FileStream(recievedFilePath, FileMode.Open);
+            const string receivedFilePath = TestDirectoryPath + "/" + recievedFileName;
+            Assert.IsTrue(File.Exists(receivedFilePath));
+            var recievedFileFs = new FileStream(receivedFilePath, FileMode.Open);
             Assert.AreEqual("allright", new StreamReader(recievedFileFs).ReadToEnd());
             recievedFileFs.Close();
         }

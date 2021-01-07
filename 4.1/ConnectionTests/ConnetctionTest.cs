@@ -11,7 +11,7 @@ namespace ConnectionTests
     using FTPClient;
     public class ConnectionTest
     {
-        const int port = 750;
+        private const int port = 49001;
         IPAddress ipAdress = IPAddress.Any;
         const string hostname = "localhost";
 
