@@ -1,13 +1,19 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace MyNUnitWeb.Models
 {
     public class TestArchive : DbContext
     {
-        public DbSet<TestRunModel> TestRuns { get; set; }
 
-        public TestArchive(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder.UseSqlServer(
-                @"Server=(localdb)\mssqllocaldb;Database=TestArchive;Trusted_Connection=True;");
+        public TestArchive(DbContextOptions<TestArchive> options)
+                : base(options)
+        {
+        }
+
+        public DbSet<TestRunModel> RunHistory { get; set; }
+
+        public DbSet<AssemblyReportModel> ReportAssemblies { get; set; }
+
+        public DbSet<TestReportModel> ReportsTests { get; set; }
     }
 }

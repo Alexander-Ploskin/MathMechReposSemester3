@@ -23,7 +23,7 @@ namespace MyNUnit
             var report = new List<InvalidTestClassReport>();
             foreach (var testClass in testClasses)
             {
-                var classReport = new InvalidTestClassReport(testClass.Name, new List<InvalidMethodReport>());
+                var classReport = new InvalidTestClassReport(testClass.Name, new List<InvalidMethodReport>(), testClass.Assembly.FullName.Split(' ')[0].TrimEnd(','));
                 var staticMethods = GetMethodsWithAttributes(testClass, new Type[2] {typeof(BeforeClassAttribute),
                     typeof(AfterClassAttribute)});
                 var notStaticMethods = GetMethodsWithAttributes(testClass, new Type[3] {typeof(BeforeAttribute),

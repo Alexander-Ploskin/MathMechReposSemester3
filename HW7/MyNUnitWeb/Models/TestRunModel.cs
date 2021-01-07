@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -9,6 +9,6 @@ namespace MyNUnitWeb.Models
         [Key]
         public DateTime DateTime { get; set; }
 
-        public readonly List<TestClassReportModel> Reports = new List<TestClassReportModel>();
+        public List<AssemblyReportModel> AssemblyReports { get; set; } = new List<AssemblyReportModel>();
     }
 }

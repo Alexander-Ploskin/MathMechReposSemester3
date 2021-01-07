@@ -1,5 +1,4 @@
-@page
-@model IEnumerable<TestRunModel>
+﻿@model IEnumerable<TestRunModel>
 
 @{
     Layout = "_Layout";
@@ -12,6 +11,65 @@
     <title>History</title>
 </head>
 <body>
-
+    <div style="margin-top:10rem">
+        <h1>History</h1>
+        @foreach (var testRun in Model)
+        {
+            var id = $"Collapse{testRun.DateTime.Ticks}";
+            <p>
+            <p>
+                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#@id" aria-expanded="false" aria-controls="@id">
+                    Test run @testRun.DateTime
+                </button>
+            </p>
+            <div class="collapse" id="@id">
+                <div class="card card-body">
+                    @foreach (var assemblyReport in testRun.AssemblyReports)
+                    {
+                        <h3>@assemblyReport.Name</h3>
+                        <div class="col-sm">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Result</th>
+                                        <th scope="col">Class</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Time</th>
+                                        <th scope="col">Message</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var testMethodReport in assemblyReport.TestReports)
+                                    {
+                                        var src = "";
+                                        if (testMethodReport.Passed == true)
+                                        {
+                                            src = "/passedIcon.svg";
+                                        }
+                                        else if (testMethodReport.Passed == false)
+                                        {
+                                            src = "/ignoredIcon.svg";
+                                        }
+                                        else
+                                        {
+                                            src = "/failedIcon.svg";
+                                        }
+                                        <tr>
+                                            <th scope="row"><img src="@src" /></th>
+                                            <td>@testMethodReport.ClassName</td>
+                                            <td>@testMethodReport.Name</td>
+                                            <td>@testMethodReport.Time</td>
+                                            <td>@testMethodReport.Message</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+            </p>
+        }
+    </div>
 </body>
 </html>

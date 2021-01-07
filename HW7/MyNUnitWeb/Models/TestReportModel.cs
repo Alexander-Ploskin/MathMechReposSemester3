@@ -1,35 +1,44 @@
-using System;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace MyNUnitWeb.Models
 {
     /// <summary>
-    /// Model responding a correct test
+    /// Model of test method report 
     /// </summary>
     public class TestReportModel
     {
         /// <summary>
-        /// Name of a test
+        /// Name of the class which contains this method
+        /// </summary>
+        public string ClassName { get; set; }
+
+        /// <summary>
+        /// Name of the method
         /// </summary>
         public string Name { get; set; }
-        
+
         /// <summary>
-        /// If test ignored or not
+        /// True if test is valid else false
         /// </summary>
-        public bool Ignored { get; set; }
-        
+        public bool Valid { get; set; }
+
         /// <summary>
-        /// If test passed ot not, null if test was ignored
+        /// Null if test was ignored, false if failed, true if passed
         /// </summary>
-        public bool Passed { get; set; }
-        
+        public bool? Passed { get; set; }
+
         /// <summary>
-        /// Time of a test execution
+        /// Time of the test execution, null if test was ignored
         /// </summary>
-        public TimeSpan Time { get; set; }
-        
+        public TimeSpan? Time { get; set; }
+
         /// <summary>
-        /// Reason of failure or ignore of a test
+        /// Reason of ignore or failure of the test
         /// </summary>
         public string Message { get; set; }
+
+        [Key]
+        public string Id { get; set; }
     }
 }
