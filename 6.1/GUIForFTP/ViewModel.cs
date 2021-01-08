@@ -206,7 +206,7 @@ namespace GUIforFTP
                 this.name = name;
                 this.isDir = isDir;
 
-                imagePath = isDir ? "../../../../Pictures/file.png" : "../../../../Pictures/folder.png";
+                imagePath = isDir ? "Resourses/folder.png" : "Resourses/file.png";
             }
 
             public string Name => name;
@@ -224,7 +224,7 @@ namespace GUIforFTP
             {
                 this.name = name;
                 downloaded = false;
-                imagePath = "../../../../Pictures/Downloading.png";
+                imagePath = "Resourses/downloading.png";
             }
 
             public string Name { get => name; }
@@ -236,11 +236,11 @@ namespace GUIforFTP
                     downloaded = value;
                     if (value)
                     {
-                        imagePath = "Pictures/Downloaded.png";
+                        imagePath = "Resourses/downloaded.png";
                     }
                     else
                     {
-                        imagePath = "Pictures/Downloading.png";
+                        imagePath = "Resourses/downloading.png";
                     }
                 }
             }
