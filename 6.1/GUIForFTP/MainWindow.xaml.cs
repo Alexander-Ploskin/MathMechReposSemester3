@@ -31,5 +31,20 @@ namespace GUIforFTP
         {
             (DataContext as ViewModel).Connect();
         }
+
+        private async void OpenClick(object sender, RoutedEventArgs e)
+        {
+            await (DataContext as ViewModel).TryOpenFolder(new ViewModel.ListElement((DataContext as ViewModel).RootFolder, true));
+        }
+
+        private async void ElementIsChosen(object sender, SelectionChangedEventArgs e)
+        {
+            await (DataContext as ViewModel).TryOpenFolder((ViewModel.ListElement)listBox.SelectedItem);
+        }
+
+        private async void BackClick(object sender, RoutedEventArgs e)
+        {
+            await (DataContext as ViewModel).Back();
+        }
     }
 }
