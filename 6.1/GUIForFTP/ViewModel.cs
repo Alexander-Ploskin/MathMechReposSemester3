@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Linq;
+using System.IO;
 
 namespace GUIforFTP
 {
@@ -21,7 +22,10 @@ namespace GUIforFTP
             connected = false;
             RootFolder = "../../../../";
             CurrentFolder = null;
+            NameOfItemToDownload = "dir1";
+            PathToDownload = "../../../../GUIForFTP";
             CurrentFolderContent = new ObservableCollection<ListElement>();
+            DownloadElements = new ObservableCollection<DownloadElement>();
         }
 
         public string Port
@@ -141,6 +145,56 @@ namespace GUIforFTP
             }
         }
 
+        public string NameOfItemToDownload { get; set; }
+
+        public string PathToDownload { get; set; }
+
+        public ObservableCollection<DownloadElement> DownloadElements { get; set; }
+
+        public async Task Download()
+        {
+            if (!connected)
+            {
+                HaveMessage?.Invoke(this, "Not connected");
+                return;
+            }
+
+            if (NameOfItemToDownload == "")
+            {
+                HaveMessage?.Invoke(this, "Enter the name of item to download");
+                return;
+            }
+
+            if (PathToDownload == "")
+            {
+                HaveMessage?.Invoke(this, "Set the path to download");
+                return;
+            }
+
+            var wantedItem = CurrentFolderContent.Where(i => i.Name == NameOfItemToDownload).FirstOrDefault();
+            if (wantedItem == null)
+            {
+                HaveMessage?.Invoke(this, "There is not item with that name");
+                return;
+            }
+            if (wantedItem.IsDir)
+            {
+                var pathOfNewDir = PathToDownload + $@"\{NameOfItemToDownload}";
+                Directory.CreateDirectory(pathOfNewDir);
+                var itemsInDir = await client.ListAsync(CurrentFolder + $@"\{NameOfItemToDownload}");
+                Connect();
+                foreach (var item in itemsInDir)
+                {
+                    DownloadElements.Add(new DownloadElement(item.Item1.Substring(item.Item1.LastIndexOf(@"\") + 1)));
+                    Task.Run(async () => await client.GetAsync(item.Item1, pathOfNewDir, item.Item1.Substring(item.Item1.LastIndexOf(@"\") + 1)));
+                }
+                return;
+            }
+            DownloadElements.Add(new DownloadElement(wantedItem.Name));
+            await Task.Run(async () => await client.GetAsync(CurrentFolder + $@"\{NameOfItemToDownload}", PathToDownload, wantedItem.Name));
+        }
+
+
         public class ListElement
         {
             private string name;
@@ -152,11 +206,44 @@ namespace GUIforFTP
                 this.name = name;
                 this.isDir = isDir;
 
-                imagePath = isDir ? "../Pictures/Downloaded.png" : "../Pictures/Downloaded.png";
+                imagePath = isDir ? "../../../../Pictures/file.png" : "../../../../Pictures/folder.png";
             }
 
             public string Name => name;
             public bool IsDir { get => isDir; set => isDir = value; }
+            public string ImagePath { get => imagePath; }
+        }
+
+        public class DownloadElement
+        {
+            private string name;
+            private bool downloaded;
+            private string imagePath;
+
+            public DownloadElement(string name)
+            {
+                this.name = name;
+                downloaded = false;
+                imagePath = "../../../../Pictures/Downloading.png";
+            }
+
+            public string Name { get => name; }
+            public bool Downloaded
+            {
+                get => downloaded;
+                set
+                {
+                    downloaded = value;
+                    if (value)
+                    {
+                        imagePath = "Pictures/Downloaded.png";
+                    }
+                    else
+                    {
+                        imagePath = "Pictures/Downloading.png";
+                    }
+                }
+            }
             public string ImagePath { get => imagePath; }
         }
     }

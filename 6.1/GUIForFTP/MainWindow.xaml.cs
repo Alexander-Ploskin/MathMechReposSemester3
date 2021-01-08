@@ -46,5 +46,10 @@ namespace GUIforFTP
         {
             await (DataContext as ViewModel).Back();
         }
+
+        private async void DownloadClick(object sender, RoutedEventArgs e)
+        {
+            await (DataContext as ViewModel).Download();
+        }
     }
 }
