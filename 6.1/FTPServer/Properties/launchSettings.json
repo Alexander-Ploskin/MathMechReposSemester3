@@ -2,7 +2,7 @@
   "profiles": {
     "FTPServer": {
       "commandName": "Project",
-      "commandLineArgs": "750"
+      "commandLineArgs": "49001"
     }
   }
 }

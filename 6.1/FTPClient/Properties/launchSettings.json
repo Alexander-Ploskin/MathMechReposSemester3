@@ -2,7 +2,7 @@
   "profiles": {
     "FTPClient": {
       "commandName": "Project",
-      "commandLineArgs": "750 localhost"
+      "commandLineArgs": "49001 localhost"
     }
   }
 }

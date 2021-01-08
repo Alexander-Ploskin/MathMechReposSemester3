@@ -6,4 +6,12 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FTPClient\FTPClient.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Pictures\" />
+  </ItemGroup>
+
 </Project>
