@@ -7,14 +7,23 @@ using System.IO;
 
 namespace GUIforFTP
 {
+    /// <summary>
+    /// Provides binding between FTPClient and GUI
+    /// </summary>
     public class ViewModel
     {
         private int port;
         private FTPClient.FTPClient client;
         private bool connected;
 
+        /// <summary>
+        /// Event for messages
+        /// </summary>
         public event EventHandler<string> HaveMessage;
 
+        /// <summary>
+        /// Constructor with default settings
+        /// </summary>
         public ViewModel()
         {
             port = 49001;
@@ -25,9 +34,12 @@ namespace GUIforFTP
             NameOfItemToDownload = "dir1";
             PathToDownload = "../../../../GUIForFTP";
             CurrentFolderContent = new ObservableCollection<ListElement>();
-            DownloadElements = new ObservableCollection<DownloadElement>();
+            DownloadedElements = new ObservableCollection<ListElement>();
         }
 
+        /// <summary>
+        /// Port to connect with the server
+        /// </summary>
         public string Port
         {
             get => port.ToString();
@@ -40,8 +52,14 @@ namespace GUIforFTP
             }
         }
 
+        /// <summary>
+        /// Adress to connect with the server
+        /// </summary>
         public string ServerAddress { get; set; }
 
+        /// <summary>
+        /// Creates new Instanse of FTPClient with connection with the server
+        /// </summary>
         public void Connect()
         {
             try
@@ -57,13 +75,26 @@ namespace GUIforFTP
             }
         }
 
+        /// <summary>
+        /// Path of the root folder in the server
+        /// </summary>
         public string RootFolder { get; set; }
 
+        /// <summary>
+        /// Path of the current folder in the server
+        /// </summary>
         public string CurrentFolder { get; set; }
 
+        /// <summary>
+        /// Collection of items in the current directory
+        /// </summary>
         public ObservableCollection<ListElement> CurrentFolderContent { get; set; }
 
-        public async Task TryOpenFolder(ListElement chosenElement)
+        /// <summary>
+        /// Tries to open one of items in the current directory
+        /// </summary>
+        /// <param name="chosenElement">Element to open</param>
+        public async Task Open(ListElement chosenElement)
         {
             if (chosenElement == null || !chosenElement.IsDir)
             {
@@ -104,6 +135,9 @@ namespace GUIforFTP
             }
         }
 
+        /// <summary>
+        /// Returns to one level higher
+        /// </summary>
         public async Task Back()
         {
             if (CurrentFolder == RootFolder)
@@ -145,12 +179,24 @@ namespace GUIforFTP
             }
         }
 
+        /// <summary>
+        /// Name of the item to download
+        /// </summary>
         public string NameOfItemToDownload { get; set; }
 
+        /// <summary>
+        /// Directory in the client's computer to download files
+        /// </summary>
         public string PathToDownload { get; set; }
 
-        public ObservableCollection<DownloadElement> DownloadElements { get; set; }
+        /// <summary>
+        /// Collection of downloaded items
+        /// </summary>
+        public ObservableCollection<ListElement> DownloadedElements { get; set; }
 
+        /// <summary>
+        /// Downloads file or all files in the folder from the server
+        /// </summary>
         public async Task Download()
         {
             if (!connected)
@@ -185,16 +231,19 @@ namespace GUIforFTP
                 Connect();
                 foreach (var item in itemsInDir)
                 {
-                    DownloadElements.Add(new DownloadElement(item.Item1.Substring(item.Item1.LastIndexOf(@"\") + 1)));
+                    var newElement = new ListElement(item.Item1.Substring(item.Item1.LastIndexOf(@"\") + 1), false);
+                    DownloadedElements.Add(newElement);
                     Task.Run(async () => await client.GetAsync(item.Item1, pathOfNewDir, item.Item1.Substring(item.Item1.LastIndexOf(@"\") + 1)));
                 }
                 return;
             }
-            DownloadElements.Add(new DownloadElement(wantedItem.Name));
+            DownloadedElements.Add(new ListElement(wantedItem.Name, false));
             await Task.Run(async () => await client.GetAsync(CurrentFolder + $@"\{NameOfItemToDownload}", PathToDownload, wantedItem.Name));
         }
 
-
+        /// <summary>
+        /// Class of items in directories
+        /// </summary>
         public class ListElement
         {
             private string name;
@@ -211,39 +260,6 @@ namespace GUIforFTP
 
             public string Name => name;
             public bool IsDir { get => isDir; set => isDir = value; }
-            public string ImagePath { get => imagePath; }
-        }
-
-        public class DownloadElement
-        {
-            private string name;
-            private bool downloaded;
-            private string imagePath;
-
-            public DownloadElement(string name)
-            {
-                this.name = name;
-                downloaded = false;
-                imagePath = "Resourses/downloading.png";
-            }
-
-            public string Name { get => name; }
-            public bool Downloaded
-            {
-                get => downloaded;
-                set
-                {
-                    downloaded = value;
-                    if (value)
-                    {
-                        imagePath = "Resourses/downloaded.png";
-                    }
-                    else
-                    {
-                        imagePath = "Resourses/downloading.png";
-                    }
-                }
-            }
             public string ImagePath { get => imagePath; }
         }
     }

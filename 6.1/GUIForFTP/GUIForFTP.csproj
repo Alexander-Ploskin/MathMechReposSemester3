@@ -7,8 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resourses\downloaded.png" />
-    <None Remove="Resourses\downloading.png" />
     <None Remove="Resourses\file.png" />
     <None Remove="Resourses\folder.png" />
   </ItemGroup>
@@ -18,8 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resourses\downloaded.png" />
-    <Resource Include="Resourses\downloading.png" />
     <Resource Include="Resourses\file.png" />
     <Resource Include="Resourses\folder.png" />
   </ItemGroup>
