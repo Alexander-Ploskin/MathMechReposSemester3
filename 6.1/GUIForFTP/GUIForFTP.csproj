@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resourses\file.png" />
+    <None Remove="Resourses\folder.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FTPClient\FTPClient.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resourses\file.png" />
+    <Resource Include="Resourses\folder.png" />
+  </ItemGroup>
+
+</Project>
